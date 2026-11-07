@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>J.A.R.V.I.S. — Neural Consciousness Interface</title>
+  <title>J.A.R.V.I.S.</title>
   <style>
     * {
       box-sizing: border-box;
@@ -17,8 +17,8 @@
       height: 100vh;
       overflow: hidden;
       background-color: #070D14;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "JetBrains Mono", Consolas, monospace;
-      color: #FFD580;
+      font-family: "JetBrains Mono", Consolas, "SF Mono", monospace;
+      color: #FFF0AA;
     }
     canvas {
       display: block;
@@ -35,431 +35,238 @@
     }
 
     /* =========================================================================
-       HOLOGRAPHIC STARK-TECH HUD OVERLAYS (MINIMALIST, ETHEREAL, ZERO CLUTTER)
+       3D SPATIAL HOLOGRAPHIC MICRO-CALLOUTS (PROJECTED DIRECTLY ON 3D NODES)
+       No boxes, no borders, no 2D cards — pure floating optical light labels
        ========================================================================= */
-    .hud-layer {
+    #spatial-labels {
       position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
       pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+    .node-callout {
+      position: absolute;
+      transform: translate(-3px, -50%);
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      white-space: nowrap;
+    }
+    .node-callout .pin-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #FFF0AA;
+      box-shadow: 0 0 8px #FFBF00, 0 0 14px #FF7F00;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .node-callout .leader-line {
+      display: inline-block;
+      width: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, #FFF0AA, rgba(255, 191, 0, 0.35));
+      vertical-align: middle;
+      margin: 0 6px 0 3px;
+      transform: translateY(-1px);
+    }
+    .node-callout .label-text {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 10.5px;
+      letter-spacing: 1.1px;
+      color: rgba(255, 244, 190, 0.95);
+      background: radial-gradient(ellipse at center, rgba(7, 13, 20, 0.72) 0%, rgba(7, 13, 20, 0.0) 85%);
+      padding: 1px 4px;
+      text-shadow: 0 0 4px #000, 0 0 9px #000, 0 0 14px #05090E, 0 0 9px rgba(255, 159, 0, 0.85);
+    }
+    .node-callout .label-sub {
+      display: block;
+      margin-left: 36px;
+      font-size: 9px;
+      letter-spacing: 0.7px;
+      color: rgba(255, 195, 70, 0.85);
+      text-shadow: 0 0 4px #000, 0 0 8px #000, 0 0 12px #05090E;
+    }
+    .node-callout.is-memory .label-text {
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 11px;
+      text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 14px #FFBF00, 0 0 6px #FFF0AA;
+    }
+    .node-callout.is-memory .pin-dot {
+      width: 7px;
+      height: 7px;
+      background: #FFFFFF;
+      box-shadow: 0 0 10px #FFFFFF, 0 0 20px #FFBF00;
+    }
+    .node-callout.is-dimmed {
+      opacity: 0.22 !important;
+    }
+    .node-callout.is-active .label-text {
+      color: #FFFFFF;
+      font-weight: 600;
+      text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 12px #FF9F00, 0 0 4px #FFF0AA;
+    }
+    .node-callout.is-active .pin-dot {
+      width: 6px;
+      height: 6px;
+      background: #FFFFFF;
+      box-shadow: 0 0 10px #FFFFFF, 0 0 18px #FF9F00;
+    }
+
+    /* =========================================================================
+       MINIMALIST BOTTOM COMMAND LINE (ZERO FAKE TELEMETRY, ZERO POPUP MODALS)
+       ========================================================================= */
+    .command-dock {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(760px, 92vw);
       z-index: 10;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 24px 32px;
+      align-items: center;
+      gap: 8px;
+      pointer-events: auto;
     }
 
-    /* Top Bar: Telemetry & Controls */
-    .hud-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+    /* Subtle translucent holographic stream line (replaces 2D modal popups) */
+    .neural-stream-readout {
       width: 100%;
-    }
-    .telemetry-box {
-      background: rgba(7, 13, 20, 0.45);
-      border: 1px solid rgba(255, 159, 0, 0.28);
-      border-radius: 4px;
-      padding: 12px 18px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 0 20px rgba(255, 159, 0, 0.08);
-      max-width: 380px;
-    }
-    .telemetry-title {
+      min-height: 20px;
+      padding: 5px 14px;
       font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255, 213, 128, 0.7);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .telemetry-title .pulse-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #FF9F00;
-      box-shadow: 0 0 8px #FF9F00;
-      animation: blink 1.2s infinite ease-in-out;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 0.3; transform: scale(0.85); }
-      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px #FFF0AA; }
-    }
-    .status-text {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 1.2px;
-      color: #FFF0AA;
-      text-shadow: 0 0 10px rgba(255, 240, 170, 0.5);
-      margin-bottom: 8px;
-    }
-    .metrics-row {
-      display: flex;
-      gap: 16px;
-      font-size: 11px;
-      color: rgba(255, 191, 0, 0.85);
-      letter-spacing: 0.8px;
-    }
-    .metrics-item span {
-      color: #FFF0AA;
-      font-weight: 500;
-    }
-
-    /* Top Right Controls */
-    .controls-box {
-      pointer-events: auto;
-      display: flex;
-      gap: 8px;
-    }
-    .hud-btn {
-      background: rgba(7, 13, 20, 0.55);
-      border: 1px solid rgba(255, 159, 0, 0.32);
-      border-radius: 4px;
-      color: #FFD580;
-      padding: 7px 14px;
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .hud-btn:hover {
-      background: rgba(255, 159, 0, 0.15);
-      border-color: #FF9F00;
-      color: #FFF0AA;
-      box-shadow: 0 0 14px rgba(255, 159, 0, 0.3);
-    }
-    .hud-btn.active {
-      background: rgba(255, 159, 0, 0.25);
-      border-color: #FFF0AA;
-      color: #FFFFFF;
-      box-shadow: 0 0 16px rgba(255, 240, 170, 0.4);
-    }
-
-    /* Phase Breadcrumb (Docked above Command Center) */
-    .pipeline-bar {
-      display: flex;
-      gap: 4px;
-      background: rgba(7, 13, 20, 0.55);
-      border: 1px solid rgba(255, 159, 0, 0.28);
-      border-radius: 20px;
-      padding: 4px 8px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      pointer-events: auto;
-      white-space: nowrap;
-      margin-bottom: 2px;
-    }
-    .stage-pill {
-      font-size: 10px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 12px;
-      color: rgba(255, 213, 128, 0.5);
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    .stage-pill:hover {
-      color: #FFD580;
-      background: rgba(255, 159, 0, 0.12);
-    }
-    .stage-pill.active {
-      color: #070D14;
-      background: #FFBF00;
-      font-weight: 700;
-      box-shadow: 0 0 12px rgba(255, 191, 0, 0.65);
-    }
-
-    /* Floating Hologram Result Card (appears upon synthesis) */
-    .result-hologram {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.95);
-      width: 480px;
-      background: rgba(7, 13, 20, 0.85);
-      border: 1px solid rgba(255, 191, 0, 0.5);
-      border-radius: 6px;
-      padding: 22px 26px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 0 40px rgba(255, 159, 0, 0.25), inset 0 0 20px rgba(255, 191, 0, 0.08);
-      pointer-events: auto;
+      letter-spacing: 0.6px;
+      line-height: 1.5;
+      color: rgba(255, 240, 170, 0.95);
+      background: radial-gradient(ellipse at center, rgba(7, 13, 20, 0.78) 0%, rgba(7, 13, 20, 0.0) 90%);
+      text-shadow: 0 0 6px #000, 0 0 10px rgba(255, 159, 0, 0.55);
+      text-align: center;
       opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
       pointer-events: none;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 20;
     }
-    .result-hologram.show {
+    .neural-stream-readout.visible {
       opacity: 1;
-      pointer-events: auto;
-      transform: translate(-50%, -50%) scale(1);
+      transform: translateY(0);
     }
-    .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 159, 0, 0.25);
-      padding-bottom: 8px;
-    }
-    .result-header h3 {
-      font-size: 13px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #FFF0AA;
-    }
-    .result-header button {
-      background: none;
-      border: none;
-      color: rgba(255, 213, 128, 0.6);
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .result-header button:hover {
-      color: #FFF0AA;
-    }
-    .result-body {
-      font-size: 12px;
-      line-height: 1.6;
-      color: #FFD580;
-    }
-    .result-body .item {
-      margin-bottom: 8px;
-      display: flex;
-      gap: 8px;
-    }
-    .result-body .tag {
-      color: #070D14;
-      background: #FF9F00;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 3px;
-      font-size: 10px;
-    }
-
-    /* Bottom Prompt Command Center */
-    .hud-footer {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      pointer-events: auto;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-    .presets-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .preset-chip {
-      background: rgba(7, 13, 20, 0.6);
-      border: 1px solid rgba(255, 159, 0, 0.28);
-      border-radius: 14px;
-      padding: 5px 13px;
-      font-size: 11px;
-      letter-spacing: 0.8px;
-      color: rgba(255, 213, 128, 0.85);
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      transition: all 0.2s ease;
-    }
-    .preset-chip:hover {
-      background: rgba(255, 159, 0, 0.2);
-      border-color: #FFF0AA;
-      color: #FFF0AA;
-      transform: translateY(-1px);
-      box-shadow: 0 0 12px rgba(255, 159, 0, 0.35);
-    }
-
-    .prompt-box {
-      width: 100%;
-      display: flex;
-      background: rgba(7, 13, 20, 0.7);
-      border: 1px solid rgba(255, 159, 0, 0.4);
-      border-radius: 6px;
-      overflow: hidden;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 0 24px rgba(255, 159, 0, 0.12);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    .prompt-box:focus-within {
-      border-color: #FF9F00;
-      box-shadow: 0 0 32px rgba(255, 159, 0, 0.3);
-    }
-    .prompt-prefix {
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
+    .neural-stream-readout .stream-phase {
       color: #FF9F00;
-      font-size: 14px;
-      font-weight: 700;
-      background: rgba(255, 159, 0, 0.08);
-      border-right: 1px solid rgba(255, 159, 0, 0.2);
+      margin-right: 8px;
+    }
+    .neural-stream-readout .stream-output {
+      color: #FFF0AA;
+    }
+
+    .prompt-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      background: rgba(7, 13, 20, 0.52);
+      border-bottom: 1px solid rgba(255, 159, 0, 0.42);
+      border-top: 1px solid rgba(255, 159, 0, 0.12);
+      padding: 2px 6px 2px 14px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .prompt-bar:focus-within {
+      border-bottom-color: rgba(255, 240, 170, 0.85);
+      box-shadow: 0 6px 24px -8px rgba(255, 159, 0, 0.35);
+    }
+    .prompt-glyph {
+      color: #FF9F00;
+      font-size: 12px;
+      margin-right: 10px;
+      opacity: 0.85;
     }
     .prompt-input {
       flex: 1;
       background: transparent;
       border: none;
       outline: none;
-      padding: 14px 16px;
       color: #FFF0AA;
-      font-size: 13px;
       font-family: inherit;
-      letter-spacing: 0.8px;
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      padding: 9px 0;
+      user-select: text;
+      -webkit-user-select: text;
     }
     .prompt-input::placeholder {
-      color: rgba(255, 213, 128, 0.38);
+      color: rgba(255, 191, 0, 0.32);
     }
-    .prompt-submit {
-      background: rgba(255, 159, 0, 0.15);
+    .prompt-send {
+      background: transparent;
       border: none;
-      border-left: 1px solid rgba(255, 159, 0, 0.3);
-      color: #FFF0AA;
+      color: rgba(255, 191, 0, 0.65);
+      font-family: inherit;
       font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 0 22px;
-      font-weight: 600;
+      letter-spacing: 1.2px;
+      padding: 6px 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
     }
-    .prompt-submit:hover {
-      background: #FF9F00;
-      color: #070D14;
-      box-shadow: 0 0 16px rgba(255, 159, 0, 0.5);
+    .prompt-send:hover {
+      color: #FFF0AA;
+      text-shadow: 0 0 10px #FF9F00;
     }
 
-    /* Telemetry Log Drawer */
-    .log-drawer {
-      position: absolute;
-      top: 90px;
-      right: 32px;
-      width: 320px;
-      max-height: calc(100vh - 240px);
-      background: rgba(7, 13, 20, 0.65);
-      border: 1px solid rgba(255, 159, 0, 0.25);
-      border-radius: 4px;
-      padding: 14px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      overflow-y: auto;
-      font-size: 11px;
-      line-height: 1.5;
-      display: none;
-      pointer-events: auto;
-      z-index: 15;
+    /* Ultra-minimal quick thought triggers (sequential memory chain demo) */
+    .quick-thoughts {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .log-drawer.open {
-      display: block;
+    .thought-link {
+      background: none;
+      border: none;
+      color: rgba(255, 191, 0, 0.42);
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-bottom: 1px dotted rgba(255, 159, 0, 0.22);
+      transition: color 0.2s ease, border-color 0.2s ease;
     }
-    .log-entry {
-      margin-bottom: 8px;
-      border-left: 2px solid rgba(255, 159, 0, 0.4);
-      padding-left: 8px;
-      color: rgba(255, 213, 128, 0.85);
-    }
-    .log-entry .time {
-      color: rgba(255, 159, 0, 0.6);
-      font-size: 9px;
-      margin-bottom: 2px;
-    }
-    .log-entry.highlight {
-      border-left-color: #FFF0AA;
-      color: #FFFFFF;
-      background: rgba(255, 240, 170, 0.06);
-      padding: 4px 8px;
-      border-radius: 0 4px 4px 0;
+    .thought-link:hover {
+      color: #FFF0AA;
+      border-bottom-color: #FFF0AA;
     }
   </style>
 </head>
 <body>
   <canvas id="glcanvas"></canvas>
+  <div id="spatial-labels"></div>
 
-  <div class="hud-layer">
-    <!-- Top Bar -->
-    <div class="hud-header">
-      <div class="telemetry-box">
-        <div class="telemetry-title">
-          <div class="pulse-dot"></div>
-          J.A.R.V.I.S. Consciousness Matrix
-        </div>
-        <div class="status-text" id="status-text">IDLE // STANDBY MONITORING</div>
-        <div class="metrics-row">
-          <div class="metrics-item">FREQ: <span id="metric-freq">42.4 Hz</span></div>
-          <div class="metrics-item">SYNAPSES: <span id="metric-synapses">1,480</span></div>
-          <div class="metrics-item">VELOCITY: <span id="metric-velocity">1.0 c</span></div>
-        </div>
-      </div>
+  <div class="command-dock">
+    <div class="neural-stream-readout" id="neural-readout"></div>
 
-      <!-- Controls -->
-      <div class="controls-box">
-        <button class="hud-btn" id="btn-logs" onclick="toggleLogs()">◈ Logs</button>
-        <button class="hud-btn" id="btn-sound" onclick="toggleSound()">🔊 Audio: ON</button>
-        <button class="hud-btn" id="btn-pause" onclick="togglePause()">⏯ Pause</button>
-        <button class="hud-btn" onclick="resetPipeline()">⟲ Reset</button>
-      </div>
+    <div class="prompt-bar">
+      <span class="prompt-glyph">&gt;</span>
+      <input
+        type="text"
+        class="prompt-input"
+        id="prompt-input"
+        placeholder="Nhập yêu cầu để quan sát J.A.R.V.I.S. kích hoạt kỹ năng, đâm chồi nơ-ron & liên kết ký ức..."
+        autocomplete="off"
+      />
+      <button class="prompt-send" id="prompt-send">EXEC ↵</button>
     </div>
 
-    <!-- Telemetry Log Drawer -->
-    <div class="log-drawer" id="log-drawer">
-      <div style="font-weight: 600; font-size: 11px; margin-bottom: 10px; color: #FFF0AA; border-bottom: 1px solid rgba(255,159,0,0.2); padding-bottom: 4px;">
-        // REAL-TIME COGNITIVE TELEMETRY
-      </div>
-      <div id="log-stream"></div>
-    </div>
-
-    <!-- Floating Holographic Result Modal (appears upon completion) -->
-    <div class="result-hologram" id="result-modal">
-      <div class="result-header">
-        <h3>✦ COGNITIVE SYNTHESIS VERIFIED</h3>
-        <button onclick="closeResultModal()">✕</button>
-      </div>
-      <div class="result-body" id="result-content"></div>
-    </div>
-
-    <!-- Bottom Command Center -->
-    <div class="hud-footer">
-      <!-- Stage Breadcrumb -->
-      <div class="pipeline-bar" id="pipeline-bar">
-        <div class="stage-pill active" onclick="setPipelineStage(0)">1. Standby</div>
-        <div class="stage-pill" onclick="setPipelineStage(1)">2. Ingest</div>
-        <div class="stage-pill" onclick="setPipelineStage(2)">3. Route</div>
-        <div class="stage-pill" onclick="setPipelineStage(3)">4. Skill</div>
-        <div class="stage-pill" onclick="setPipelineStage(4)">5. Parallel</div>
-        <div class="stage-pill" onclick="setPipelineStage(5)">6. Verify</div>
-        <div class="stage-pill" onclick="setPipelineStage(6)">7. Synthesis</div>
-      </div>
-
-      <div class="presets-row">
-        <div class="preset-chip" onclick="executePreset(0)">⚡ Phân tích Kiến trúc & Định tuyến</div>
-        <div class="preset-chip" onclick="executePreset(1)">🔄 Lập trình TDD & Tự sửa lỗi</div>
-        <div class="preset-chip" onclick="executePreset(2)">🌐 Điều phối Subagents Song song</div>
-        <div class="preset-chip" onclick="executePreset(3)">🛡️ Quét Bảo mật Toàn diện</div>
-      </div>
-      <div class="prompt-box">
-        <div class="prompt-prefix">⌘ J.A.R.V.I.S.</div>
-        <input type="text" class="prompt-input" id="prompt-input" placeholder="Nhập yêu cầu phân tích, truy vấn kỹ năng hoặc kích hoạt quy trình..." onkeydown="handlePromptKey(event)" />
-        <button class="prompt-submit" onclick="submitPrompt()">EXECUTE ↵</button>
-      </div>
+    <div class="quick-thoughts">
+      <button class="thought-link" data-idx="0">01 // Thiết kế API xác thực JWT</button>
+      <button class="thought-link" data-idx="1">02 // Viết module Python cho API vừa tạo</button>
+      <button class="thought-link" data-idx="2">03 // Chạy TDD & kiểm tra SQL Injection trên module đó</button>
+      <button class="thought-link" data-idx="3">04 // Tối ưu bộ nhớ & điều phối Subagents</button>
     </div>
   </div>
 
@@ -474,99 +281,93 @@
     });
 
     // =========================================================================
-    // 1. PROCEDURAL WEB AUDIO SFX (ZERO EXTERNAL ASSETS, ATMOSPHERIC HOLOGRAPHIC)
+    // 1. SEMANTIC NEURAL DOMAINS (MỖI NHÁNH CHÍNH ĐẠI DIỆN CHO MỘT MIỀN TRI THỨC)
     // =========================================================================
-    let audioCtx = null;
-    let audioEnabled = true;
-    let baseHumGain = null;
-
-    function initAudio() {
-      if (audioCtx) return;
-      try {
-        const AudioClass = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioClass();
-
-        // Subtle ambient holographic hum (55 Hz low drone)
-        const osc = audioCtx.createOscillator();
-        const filter = audioCtx.createBiquadFilter();
-        baseHumGain = audioCtx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(55, audioCtx.currentTime);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(140, audioCtx.currentTime);
-
-        baseHumGain.gain.setValueAtTime(audioEnabled ? 0.05 : 0.0, audioCtx.currentTime);
-
-        osc.connect(filter);
-        filter.connect(baseHumGain);
-        baseHumGain.connect(audioCtx.destination);
-        osc.start();
-      } catch (e) {
-        console.warn('Audio not initialized', e);
+    // Domain -1: Core Iris & Structural Hologram Rings (Always active anchor)
+    // Domain 0..6: 7 Functional Cognitive & Skill Trunks
+    const NEURAL_DOMAINS = [
+      {
+        id: 0,
+        code: 'MEMORY // CONTEXT',
+        skill: 'rag-implementation',
+        desc: 'Ký ức dài hạn & Ngữ cảnh phiên',
+        theta: -2.32,
+        elev: 0.15,
+        anchorPos: null
+      },
+      {
+        id: 1,
+        code: 'ARCH // SYSTEM DESIGN',
+        skill: 'backend-architect',
+        desc: 'Kiến trúc hệ thống & Quy hoạch',
+        theta: 1.84,
+        elev: 0.06,
+        anchorPos: null
+      },
+      {
+        id: 2,
+        code: 'CODE // SYNTHESIS',
+        skill: 'python-pro',
+        desc: 'Tổng hợp mã nguồn & Thuật toán',
+        theta: 1.26,
+        elev: -0.05,
+        anchorPos: null
+      },
+      {
+        id: 3,
+        code: 'DEBUG // DIAGNOSTICS',
+        skill: 'systematic-debugging',
+        desc: 'Chẩn đoán lỗi & Truy vết gốc rễ',
+        theta: 0.58,
+        elev: 0.14,
+        anchorPos: null
+      },
+      {
+        id: 4,
+        code: 'VERIFY // TDD ENGINE',
+        skill: 'test-driven-development',
+        desc: 'Kiểm thử TDD & Xác thực kết quả',
+        theta: -1.56,
+        elev: 0.04,
+        anchorPos: null
+      },
+      {
+        id: 5,
+        code: 'SEC // THREAT AUDIT',
+        skill: 'security-auditor',
+        desc: 'Kiểm toán bảo mật & Chống tấn công',
+        theta: -0.82,
+        elev: 0.12,
+        anchorPos: null
+      },
+      {
+        id: 6,
+        code: 'SWARM // SUBAGENTS',
+        skill: 'dispatching-parallel-agents',
+        desc: 'Điều phối Subagents song song',
+        theta: -0.08,
+        elev: -0.06,
+        anchorPos: null
       }
-    }
+    ];
 
-    function playTone(freq, dur = 0.15, type = 'sine', gainVal = 0.08) {
-      if (!audioEnabled) return;
-      initAudio();
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      g.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + dur);
-    }
+    // Current and target Hebbian activation weights for each of the 7 domains
+    // When idle: all 1.0 (balanced hologram). When thinking: active domains surge to 1.75, inactive dim to 0.28!
+    const domainWeights       = new Float32Array([1, 1, 1, 1, 1, 1, 1]);
+    const targetDomainWeights = new Float32Array([1, 1, 1, 1, 1, 1, 1]);
 
-    function playSweep(f0, f1, dur = 0.45) {
-      if (!audioEnabled) return;
-      initAudio();
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(f0, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(f1, audioCtx.currentTime + dur);
-      g.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + dur);
-    }
-
-    function playChord() {
-      if (!audioEnabled) return;
-      const notes = [523.25, 659.25, 783.99, 1046.50];
-      notes.forEach((f, i) => {
-        setTimeout(() => playTone(f, 0.7, 'sine', 0.05), i * 65);
-      });
-    }
-
-    function toggleSound() {
-      audioEnabled = !audioEnabled;
-      const btn = document.getElementById('btn-sound');
-      btn.innerText = audioEnabled ? '🔊 Audio: ON' : '🔇 Audio: OFF';
-      btn.classList.toggle('active', audioEnabled);
-      if (baseHumGain && audioCtx) {
-        baseHumGain.gain.setValueAtTime(audioEnabled ? 0.05 : 0.0, audioCtx.currentTime);
-      }
-    }
+    // Persistent Memory Nodes grown during this session (Dynamic Neurogenesis)
+    const memoryNodes = [];
+    // Active Synaptic Bridges linking memories <-> skills <-> prior memories
+    const synapticBridges = [];
 
     // =========================================================================
-    // 2. GLSL SHADERS WITH PROCESS MODULATION
+    // 2. GLSL SHADERS (WITH PER-DOMAIN HEBBIAN WEIGHTING & NEUROGENESIS)
     // =========================================================================
-
     const GLSL_ORGANIC_NOISE = `
-      vec3 organicDisplacement(vec3 pos, float time, float resonance, float excitation) {
-        float freq = 2.0 + resonance * 0.75 + excitation * 1.2;
-        float t = time * (0.85 + resonance * 0.8 + excitation * 1.5);
+      vec3 organicDisplacement(vec3 pos, float time, float resonance) {
+        float freq = 2.0 + resonance * 0.65;
+        float t = time * (0.85 + resonance * 0.75);
 
         float n1 = sin(pos.x * freq + t) * cos(pos.y * freq - t * 0.8) * sin(pos.z * freq + t * 0.6);
         float n2 = cos(pos.y * (freq * 1.35) + t * 1.1) * sin(pos.z * (freq * 1.25) - t * 0.7);
@@ -575,15 +376,30 @@
         float radialWave = (n1 * 0.52 + n2 * 0.30 + n3 * 0.18);
         float r = length(pos);
 
-        float coreExpand = smoothstep(0.28, 0.05, r) * (resonance * 0.085 + excitation * 0.14);
-        float breathAmp  = 0.085 * smoothstep(0.08, 0.78, r) * (1.0 + resonance * 0.35 + excitation * 0.5);
+        float coreExpand = smoothstep(0.28, 0.05, r) * resonance * 0.085;
+        float breathAmp  = 0.085 * smoothstep(0.08, 0.78, r) * (1.0 + resonance * 0.35);
 
         vec3 radialDir = r > 0.0001 ? pos / r : vec3(0.0, 1.0, 0.0);
         return radialDir * (r * (radialWave * breathAmp + coreExpand));
       }
+
+      float getDomainWeight(float domId, float w0, float w1, float w2, float w3, float w4, float w5, float w6) {
+        int id = int(domId + 0.5);
+        if (id < 0) {
+          float avg = (w0 + w1 + w2 + w3 + w4 + w5 + w6) / 7.0;
+          return clamp(0.42 + 0.58 * avg, 0.48, 1.05);
+        }
+        if (id == 0) return w0;
+        if (id == 1) return w1;
+        if (id == 2) return w2;
+        if (id == 3) return w3;
+        if (id == 4) return w4;
+        if (id == 5) return w5;
+        if (id == 6) return w6;
+        return 1.65; // Newly grown neurogenesis branches & synaptic bridges
+      }
     `;
 
-    // A. Ribbon Shader
     const vsRibbon = `
       precision mediump float;
       attribute vec3 a_curr;
@@ -594,6 +410,7 @@
       attribute float a_layer;
       attribute float a_t;
       attribute float a_heat;
+      attribute float a_domain;
 
       uniform mat4 u_proj;
       uniform mat4 u_view;
@@ -602,8 +419,8 @@
       uniform float u_pulse;
       uniform float u_time;
       uniform float u_resonance;
-      uniform float u_excitation;
       uniform mat3 u_layerRot[6];
+      uniform float u_domW[7];
 
       varying float v_side;
       varying float v_alpha;
@@ -624,7 +441,7 @@
       }
 
       vec3 transformPos(vec3 pos, int lid) {
-        vec3 displaced = pos + organicDisplacement(pos, u_time, u_resonance, u_excitation);
+        vec3 displaced = pos + organicDisplacement(pos, u_time, u_resonance);
         if (lid < 10) {
           return getLayerMat(lid) * displaced;
         } else {
@@ -653,22 +470,28 @@
         dir = len > 0.0001 ? dir / len : vec2(1.0, 0.0);
         vec2 normal = vec2(-dir.y, dir.x);
 
+        float domWeight = getDomainWeight(
+          a_domain,
+          u_domW[0], u_domW[1], u_domW[2], u_domW[3], u_domW[4], u_domW[5], u_domW[6]
+        );
+        float widthScale = 0.75 + 0.32 * domWeight;
+
         float dist = max(-vCurr.z, 0.4);
         float defocus = max(0.0, abs(dist - 1.88) - 0.18);
         float dofFactor = clamp(defocus * 1.35, 0.0, 1.0);
         float dofWidthBoost = 1.0 + dofFactor * 0.42;
         float dofEnergyConserve = 1.0 / (1.0 + dofFactor * 0.55);
 
-        float w = (a_width * dofWidthBoost * u_pixelRatio * 1.82 / dist) * (0.88 + 0.16 * u_pulse);
+        float w = (a_width * widthScale * dofWidthBoost * u_pixelRatio * 1.82 / dist) * (0.88 + 0.16 * u_pulse);
         vec2 offset = (normal * a_side * w) / u_resolution * cCurr.w;
 
         gl_Position = vec4(cCurr.xy + offset, cCurr.z, cCurr.w);
 
         float depthFade = clamp((vCurr.z + 2.8) / 2.2, 0.20, 1.22);
         v_side  = a_side;
-        v_alpha = a_alpha * depthFade * dofEnergyConserve * u_pulse;
+        v_alpha = a_alpha * domWeight * depthFade * dofEnergyConserve * u_pulse;
         v_t     = a_t;
-        v_heat  = a_heat + u_resonance * 0.22 + u_excitation * 0.35;
+        v_heat  = a_heat + max(0.0, domWeight - 1.0) * 0.65 + u_resonance * 0.18;
         v_dof   = dofFactor;
         v_rad   = length(a_curr);
       }
@@ -683,7 +506,6 @@
       varying float v_dof;
       varying float v_rad;
       uniform float u_time;
-      uniform float u_streamSpeed;
 
       void main() {
         float d = abs(v_side);
@@ -691,9 +513,9 @@
         float softGlow  = exp(-d * d * 3.2) * (1.0 - d * d) * 0.88;
         float glow = mix(sharpGlow, softGlow, v_dof * 0.75);
 
-        float wave1 = sin(v_t * 20.0 - u_time * 3.8 * u_streamSpeed) * 0.5 + 0.5;
-        float wave2 = sin(v_t * 9.0  + u_time * 2.3 * u_streamSpeed) * 0.5 + 0.5;
-        float streamBoost = 0.84 + 0.38 * pow(wave1 * wave2, 2.0);
+        float wave1 = sin(v_t * 20.0 - u_time * 4.2) * 0.5 + 0.5;
+        float wave2 = sin(v_t * 9.0  + u_time * 2.5) * 0.5 + 0.5;
+        float streamBoost = 0.84 + 0.36 * pow(wave1 * wave2, 2.0);
 
         vec3 burntOrange = vec3(0.76, 0.21, 0.005);
         vec3 warmOrange  = vec3(1.00, 0.498, 0.00);   // #FF7F00
@@ -703,9 +525,9 @@
         float periph = smoothstep(0.72, 1.02, v_rad);
         vec3 baseCol = mix(warmOrange, burntOrange, periph * 0.72);
 
-        float coreFactor = exp(-d * d * 10.5) * (1.0 - v_dof * 0.45) + v_heat * 0.36;
+        float coreFactor = exp(-d * d * 10.5) * (1.0 - v_dof * 0.45) + v_heat * 0.38;
         vec3 col = mix(baseCol, amberGold, smoothstep(0.12, 0.58, glow + v_heat * 0.25));
-        col = mix(col, pureWhite, smoothstep(0.55, 1.12, coreFactor * streamBoost));
+        col = mix(col, pureWhite, smoothstep(0.52, 1.10, coreFactor * streamBoost));
 
         float edgeFade = 1.0 - smoothstep(0.88, 1.06, v_rad) * 0.55;
         float a = glow * v_alpha * streamBoost * edgeFade;
@@ -713,21 +535,21 @@
       }
     `;
 
-    // B. Web Filament Shader
     const vsWeb = `
       precision mediump float;
       attribute vec3 a_pos;
       attribute float a_alpha;
       attribute float a_layer;
       attribute float a_heat;
+      attribute float a_domain;
 
       uniform mat4 u_proj;
       uniform mat4 u_view;
       uniform float u_pulse;
       uniform float u_time;
       uniform float u_resonance;
-      uniform float u_excitation;
       uniform mat3 u_layerRot[6];
+      uniform float u_domW[7];
 
       varying float v_alpha;
       varying float v_heat;
@@ -746,7 +568,7 @@
 
       void main() {
         int lid = int(a_layer + 0.5);
-        vec3 displaced = a_pos + organicDisplacement(a_pos, u_time, u_resonance, u_excitation);
+        vec3 displaced = a_pos + organicDisplacement(a_pos, u_time, u_resonance);
         vec3 p;
         if (lid < 10) {
           p = getLayerMat(lid) * displaced;
@@ -756,12 +578,17 @@
           p = mix(u_layerRot[0] * displaced, rotShell * displaced, blend);
         }
 
+        float domWeight = getDomainWeight(
+          a_domain,
+          u_domW[0], u_domW[1], u_domW[2], u_domW[3], u_domW[4], u_domW[5], u_domW[6]
+        );
+
         vec4 viewPos = u_view * vec4(p, 1.0);
         gl_Position = u_proj * viewPos;
 
         float depthFade = clamp((viewPos.z + 2.8) / 2.2, 0.18, 1.18);
-        v_alpha = a_alpha * depthFade * u_pulse;
-        v_heat  = a_heat + u_resonance * 0.18 + u_excitation * 0.25;
+        v_alpha = a_alpha * domWeight * depthFade * u_pulse;
+        v_heat  = a_heat + max(0.0, domWeight - 1.0) * 0.55 + u_resonance * 0.18;
         v_rad   = length(a_pos);
       }
     `;
@@ -774,8 +601,8 @@
 
       void main() {
         vec3 burntOrange = vec3(0.74, 0.20, 0.005);
-        vec3 warmOrange  = vec3(1.00, 0.498, 0.00); // #FF7F00
-        vec3 amberGold   = vec3(1.00, 0.749, 0.00); // #FFBF00
+        vec3 warmOrange  = vec3(1.00, 0.498, 0.00);
+        vec3 amberGold   = vec3(1.00, 0.749, 0.00);
         vec3 pureWhite   = vec3(1.00, 0.96, 0.84);
 
         float periph = smoothstep(0.72, 1.02, v_rad);
@@ -789,7 +616,6 @@
       }
     `;
 
-    // C. Nodes Shader
     const vsNodes = `
       precision mediump float;
       attribute vec3 a_pos;
@@ -797,6 +623,7 @@
       attribute float a_alpha;
       attribute float a_layer;
       attribute float a_type;
+      attribute float a_domain;
 
       uniform mat4 u_proj;
       uniform mat4 u_view;
@@ -804,8 +631,8 @@
       uniform float u_pulse;
       uniform float u_time;
       uniform float u_resonance;
-      uniform float u_excitation;
       uniform mat3 u_layerRot[6];
+      uniform float u_domW[7];
 
       varying float v_alpha;
       varying float v_type;
@@ -825,7 +652,7 @@
 
       void main() {
         int lid = int(a_layer + 0.5);
-        vec3 displaced = a_pos + organicDisplacement(a_pos, u_time, u_resonance, u_excitation);
+        vec3 displaced = a_pos + organicDisplacement(a_pos, u_time, u_resonance);
         vec3 p;
         if (lid < 10) {
           p = getLayerMat(lid) * displaced;
@@ -834,6 +661,11 @@
           float blend = smoothstep(0.10, 0.55, length(a_pos));
           p = mix(u_layerRot[0] * displaced, rotShell * displaced, blend);
         }
+
+        float domWeight = getDomainWeight(
+          a_domain,
+          u_domW[0], u_domW[1], u_domW[2], u_domW[3], u_domW[4], u_domW[5], u_domW[6]
+        );
 
         vec4 viewPos = u_view * vec4(p, 1.0);
         gl_Position = u_proj * viewPos;
@@ -844,22 +676,22 @@
         if (a_type > 1.5) dofFactor = 0.88;
 
         float phase = dot(a_pos, vec3(43.1, 27.7, 35.3));
-        float flickerSpeed = 3.4 + u_resonance * 6.5 + u_excitation * 9.0;
+        float flickerSpeed = 3.4 + max(0.0, domWeight - 1.0) * 5.0 + u_resonance * 5.5;
         float synapticFlicker = 1.0;
         if (a_type > 0.4 && a_type < 1.5) {
-          synapticFlicker = 0.76 + 0.38 * pow(0.5 + 0.5 * sin(u_time * flickerSpeed + phase), 2.0);
+          synapticFlicker = 0.76 + 0.34 * pow(0.5 + 0.5 * sin(u_time * flickerSpeed + phase), 2.0);
         } else if (a_type <= 0.4) {
-          synapticFlicker = 0.80 + 0.28 * sin(u_time * (2.6 + u_excitation * 2.0) + phase);
+          synapticFlicker = 0.80 + 0.25 * sin(u_time * 2.6 + phase);
         }
 
-        float sizeBoost = 1.0 + dofFactor * 1.75;
+        float sizeBoost = (1.0 + dofFactor * 1.75) * (0.85 + 0.22 * domWeight);
         gl_PointSize = clamp((a_size * sizeBoost * u_pixelRatio * 2.35 / dist) * (0.9 + 0.14 * u_pulse), 1.5, 110.0);
 
         float depthFade = clamp((viewPos.z + 2.8) / 2.2, 0.22, 1.2);
         float energyConserve = 1.0 / (1.0 + dofFactor * 1.85);
 
-        v_alpha = a_alpha * depthFade * energyConserve * synapticFlicker * u_pulse;
-        v_type  = a_type + u_resonance * 0.25 + u_excitation * 0.4;
+        v_alpha = a_alpha * domWeight * depthFade * energyConserve * synapticFlicker * u_pulse;
+        v_type  = a_type + max(0.0, domWeight - 1.0) * 0.55 + u_resonance * 0.25;
         v_dof   = dofFactor;
         v_rad   = length(a_pos);
       }
@@ -882,14 +714,14 @@
         float shape = mix(sharpNode, softBokeh, clamp(v_dof * 0.82, 0.0, 0.88));
 
         vec3 burntOrange = vec3(0.76, 0.21, 0.01);
-        vec3 warmOrange  = vec3(1.00, 0.498, 0.00); // #FF7F00
-        vec3 amberGold   = vec3(1.00, 0.749, 0.00); // #FFBF00
-        vec3 pureWhite   = vec3(1.00, 0.975, 0.88); // #FFFFFF peak intensity
+        vec3 warmOrange  = vec3(1.00, 0.498, 0.00);
+        vec3 amberGold   = vec3(1.00, 0.749, 0.00);
+        vec3 pureWhite   = vec3(1.00, 0.975, 0.88);
 
         float periph = smoothstep(0.72, 1.00, v_rad);
         vec3 baseCol = mix(warmOrange, burntOrange, periph * 0.65);
 
-        float coreHeat = exp(-d2 * 6.5) * (1.0 - v_dof * 0.5) + clamp(v_type, 0.0, 1.2) * 0.42;
+        float coreHeat = exp(-d2 * 6.5) * (1.0 - v_dof * 0.5) + clamp(v_type, 0.0, 1.4) * 0.42;
         vec3 col = mix(baseCol, amberGold, smoothstep(0.0, 0.35, shape));
         col = mix(col, pureWhite, smoothstep(0.38, 0.95, coreHeat));
 
@@ -898,8 +730,8 @@
       }
     `;
 
-    // D. Blur & Composite Shaders
     const vsQuad = `
+      precision mediump float;
       attribute vec2 a_pos;
       varying vec2 v_uv;
       void main() {
@@ -938,7 +770,6 @@
       uniform vec2 u_texel;
       uniform float u_pulse;
       uniform float u_resonance;
-      uniform float u_excitation;
 
       const vec3 BG_BASE = vec3(0.0392, 0.0667, 0.0941);
 
@@ -946,7 +777,7 @@
         vec2 c = v_uv * 2.0 - 1.0;
         float r2 = dot(c, c);
 
-        vec2 caOffset = c * (0.0011 + 0.0018 * r2 + u_excitation * 0.0012);
+        vec2 caOffset = c * (0.0011 + 0.0018 * r2);
         float sR = texture2D(u_scene, v_uv + caOffset).r;
         float sG = texture2D(u_scene, v_uv).g;
         float sB = texture2D(u_scene, v_uv - caOffset * 1.1).b;
@@ -975,7 +806,7 @@
 
         float invSqAura = 1.0 / (1.0 + r2 * 2.8);
         vec3 bg = BG_BASE * (0.88 - 0.25 * r2)
-                + vec3(0.90, 0.38, 0.02) * invSqAura * 0.055 * (u_pulse + u_resonance * 0.25 + u_excitation * 0.35);
+                + vec3(0.90, 0.38, 0.02) * invSqAura * 0.055 * (u_pulse + u_resonance * 0.25);
 
         gl_FragColor = vec4(bg + mapped, 1.0);
       }
@@ -1003,12 +834,17 @@
     const progComposite = createProgram(vsQuad, fsComposite);
 
     // =========================================================================
-    // 3. GEOMETRY GENERATION
+    // 3. BASE HOLOGRAM & SEMANTIC NEURAL TOPOLOGY GENERATION
     // =========================================================================
     const ribbonVerts = [];
     const webVerts    = [];
     const staticNodes = [];
     const flowPaths   = [];
+
+    // Dynamic buffers for real-time Neurogenesis (newly grown branches & synaptic bridges)
+    const dynRibbonVerts = [];
+    const dynWebVerts    = [];
+    const dynMemoryNodes = [];
 
     let seed = 918273;
     function rand() {
@@ -1039,7 +875,7 @@
       return out;
     }
 
-    function addRibbon(pts, wStart, wEnd, alpha, layer, heat = 0.5, isRadial = false, synapticPinch = false) {
+    function pushRibbonTo(targetArr, pts, wStart, wEnd, alpha, layer, heat = 0.5, isRadial = false, synapticPinch = false, domain = -1) {
       const n = pts.length;
       if (n < 2) return;
       const effLayer = isRadial ? layer + 10 : layer;
@@ -1061,25 +897,29 @@
         const w0 = (wStart + (wEnd - wStart) * t0) * k0;
         const w1 = (wStart + (wEnd - wStart) * t1) * k1;
 
-        ribbonVerts.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], -1, w0, alpha, effLayer, t0, heat);
-        ribbonVerts.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2],  1, w0, alpha, effLayer, t0, heat);
-        ribbonVerts.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], -1, w1, alpha, effLayer, t1, heat);
+        targetArr.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], -1, w0, alpha, effLayer, t0, heat, domain);
+        targetArr.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2],  1, w0, alpha, effLayer, t0, heat, domain);
+        targetArr.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], -1, w1, alpha, effLayer, t1, heat, domain);
 
-        ribbonVerts.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2],  1, w0, alpha, effLayer, t0, heat);
-        ribbonVerts.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2],  1, w1, alpha, effLayer, t1, heat);
-        ribbonVerts.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], -1, w1, alpha, effLayer, t1, heat);
+        targetArr.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2],  1, w0, alpha, effLayer, t0, heat, domain);
+        targetArr.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2],  1, w1, alpha, effLayer, t1, heat, domain);
+        targetArr.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], -1, w1, alpha, effLayer, t1, heat, domain);
       }
     }
 
-    function addLine(p1, p2, alpha, layer, heat = 0.4, isRadial = false) {
-      const effLayer = isRadial ? layer + 10 : layer;
-      webVerts.push(p1[0], p1[1], p1[2], alpha, effLayer, heat);
-      webVerts.push(p2[0], p2[1], p2[2], alpha, effLayer, heat);
+    function addRibbon(pts, wStart, wEnd, alpha, layer, heat = 0.5, isRadial = false, synapticPinch = false, domain = -1) {
+      pushRibbonTo(ribbonVerts, pts, wStart, wEnd, alpha, layer, heat, isRadial, synapticPinch, domain);
     }
 
-    function addPoint(p, size, alpha, layer, type = 0.0, isRadial = false) {
+    function addLine(p1, p2, alpha, layer, heat = 0.4, isRadial = false, domain = -1) {
       const effLayer = isRadial ? layer + 10 : layer;
-      staticNodes.push(p[0], p[1], p[2], size, alpha, effLayer, type);
+      webVerts.push(p1[0], p1[1], p1[2], alpha, effLayer, heat, domain);
+      webVerts.push(p2[0], p2[1], p2[2], alpha, effLayer, heat, domain);
+    }
+
+    function addPoint(p, size, alpha, layer, type = 0.0, isRadial = false, domain = -1) {
+      const effLayer = isRadial ? layer + 10 : layer;
+      staticNodes.push(p[0], p[1], p[2], size, alpha, effLayer, type, domain);
     }
 
     function rot3D(p, rx, ry, rz) {
@@ -1096,7 +936,7 @@
     function buildTrussArc(opts) {
       const {
         rInner, rOuter, zThickness, startAng, endAng, steps,
-        rx, ry, rz, layer, alpha = 0.34, heat = 0.55, combPinLen = 0.0, ribbonW = 3.5, denseComb = false
+        rx, ry, rz, layer, alpha = 0.34, heat = 0.55, combPinLen = 0.0, ribbonW = 3.5, denseComb = false, domain = -1
       } = opts;
 
       const railIn = [], railOut = [], railBack = [], railMid = [];
@@ -1120,20 +960,20 @@
         const endFade = Math.sin(t * Math.PI);
         const segAlpha = alpha * (0.32 + 0.68 * endFade);
 
-        addLine(pIn, pOut, segAlpha * 0.68, layer, heat);
+        addLine(pIn, pOut, segAlpha * 0.68, layer, heat, false, domain);
         if (i % 2 === 0) {
-          addLine(pIn, pBack, segAlpha * 0.52, layer, heat * 0.85);
-          addLine(pOut, pBack, segAlpha * 0.42, layer, heat * 0.75);
+          addLine(pIn, pBack, segAlpha * 0.52, layer, heat * 0.85, false, domain);
+          addLine(pOut, pBack, segAlpha * 0.42, layer, heat * 0.75, false, domain);
         }
         if (i > 0) {
-          addLine(railIn[i - 1], pOut, segAlpha * 0.45, layer, heat * 0.75);
-          addLine(railOut[i - 1], pIn, segAlpha * 0.40, layer, heat * 0.70);
-          addLine(railIn[i - 1], pBack, segAlpha * 0.35, layer, heat * 0.65);
+          addLine(railIn[i - 1], pOut, segAlpha * 0.45, layer, heat * 0.75, false, domain);
+          addLine(railOut[i - 1], pIn, segAlpha * 0.40, layer, heat * 0.70, false, domain);
+          addLine(railIn[i - 1], pBack, segAlpha * 0.35, layer, heat * 0.65, false, domain);
         }
 
         if (i % 3 === 0) {
-          addPoint(pOut, 3.2 + rand() * 2.5, segAlpha * 0.95, layer, 0.75);
-          if (rand() < 0.55) addPoint(pIn, 2.8, segAlpha * 0.85, layer, 0.5);
+          addPoint(pOut, 3.2 + rand() * 2.5, segAlpha * 0.95, layer, 0.75, false, domain);
+          if (rand() < 0.55) addPoint(pIn, 2.8, segAlpha * 0.85, layer, 0.5, false, domain);
         }
 
         const combStep = denseComb ? 1 : 2;
@@ -1143,40 +983,40 @@
           const pTip = rot3D([c * (rOuter + len), s * (rOuter + len), zThickness * 0.5], rx, ry, rz);
 
           if (i % 2 === 0) {
-            addRibbon([pOut, pTip], ribbonW * 0.72, ribbonW * 0.38, segAlpha * 0.85, layer, heat + 0.28, false);
+            addRibbon([pOut, pTip], ribbonW * 0.72, ribbonW * 0.38, segAlpha * 0.85, layer, heat + 0.28, false, false, domain);
           } else {
-            addLine(pOut, pTip, segAlpha * 0.85, layer, heat + 0.22);
+            addLine(pOut, pTip, segAlpha * 0.85, layer, heat + 0.22, false, domain);
           }
 
           if (rand() < 0.58) {
             const stepAng = a + (rand() < 0.5 ? 0.022 : -0.022);
             const pCorner = rot3D([Math.cos(stepAng) * (rOuter + len), Math.sin(stepAng) * (rOuter + len), zThickness * 0.5], rx, ry, rz);
-            addLine(pTip, pCorner, segAlpha * 0.78, layer, heat + 0.22);
-            addPoint(pCorner, 3.6, segAlpha * 1.05, layer, 1.0);
+            addLine(pTip, pCorner, segAlpha * 0.78, layer, heat + 0.22, false, domain);
+            addPoint(pCorner, 3.6, segAlpha * 1.05, layer, 1.0, false, domain);
           } else {
-            addPoint(pTip, 3.8 + (i % 3 === 0 ? 1.5 : 0.0), segAlpha * 1.08, layer, 1.0);
+            addPoint(pTip, 3.8 + (i % 3 === 0 ? 1.5 : 0.0), segAlpha * 1.08, layer, 1.0, false, domain);
           }
 
           if (i >= combStep && rand() < 0.25) {
             const prevA = startAng + (endAng - startAng) * ((i - combStep) / steps);
             const pMid1 = rot3D([Math.cos(prevA) * (rOuter + len * 0.45), Math.sin(prevA) * (rOuter + len * 0.45), zThickness * 0.5], rx, ry, rz);
             const pMid2 = rot3D([c * (rOuter + len * 0.45), s * (rOuter + len * 0.45), zThickness * 0.5], rx, ry, rz);
-            addLine(pMid1, pMid2, segAlpha * 0.65, layer, heat + 0.15);
+            addLine(pMid1, pMid2, segAlpha * 0.65, layer, heat + 0.15, false, domain);
           }
         }
       }
 
-      addRibbon(railIn,  ribbonW, ribbonW * 0.85, alpha * 0.92, layer, heat + 0.2, false);
-      addRibbon(railOut, ribbonW * 0.9, ribbonW * 0.75, alpha * 0.82, layer, heat + 0.15, false);
-      addRibbon(railBack, ribbonW * 0.65, ribbonW * 0.55, alpha * 0.55, layer, heat, false);
+      addRibbon(railIn,  ribbonW, ribbonW * 0.85, alpha * 0.92, layer, heat + 0.2, false, false, domain);
+      addRibbon(railOut, ribbonW * 0.9, ribbonW * 0.75, alpha * 0.82, layer, heat + 0.15, false, false, domain);
+      addRibbon(railBack, ribbonW * 0.65, ribbonW * 0.55, alpha * 0.55, layer, heat, false, false, domain);
 
-      flowPaths.push({ points: railMid, layer: layer, speed: 0.22 + rand() * 0.2, dir: rand() < 0.5 ? 1 : -1 });
+      flowPaths.push({ points: railMid, layer: layer, speed: 0.22 + rand() * 0.2, dir: rand() < 0.5 ? 1 : -1, domain: domain });
     }
 
     function buildCompleteJarvisSphere() {
       const webAnchors = [[], [], [], [], [], []];
 
-      // 1. Center Node & Inner Collars
+      // 1. Center Node (Working Memory Anchor)
       const irisRings = [
         { r: 0.080, z:  0.000, w: 7.5, a: 0.85, h: 1.25, rx: 0.10, ry: -0.08 },
         { r: 0.085, z:  0.006, w: 6.0, a: 0.72, h: 1.10, rx: 0.16, ry: -0.06 },
@@ -1193,75 +1033,72 @@
           const a = (i / steps) * Math.PI * 2;
           pts.push(rot3D([Math.cos(a) * ir.r, Math.sin(a) * ir.r, ir.z], ir.rx, ir.ry, 0));
         }
-        addRibbon(pts, ir.w, ir.w, ir.a, 0, ir.h, false, true);
+        addRibbon(pts, ir.w, ir.w, ir.a, 0, ir.h, false, true, -1);
       });
 
-      // Hot diagonal flare
       const flarePts = [
         [-0.08, -0.085, 0.05],
         [-0.02, -0.078, 0.05],
         [ 0.035, -0.065, 0.05],
         [ 0.075, -0.035, 0.04]
       ];
-      addRibbon(flarePts, 10.0, 6.0, 0.95, 0, 1.35, false);
-      addPoint([0.038, -0.068, 0.04], 16.0, 1.15, 0, 1.0);
-      addPoint([0.058, -0.052, 0.04], 12.0, 1.20, 0, 1.0);
-      addPoint([-0.045, -0.075, 0.04], 14.0, 0.95, 0, 1.0);
+      addRibbon(flarePts, 10.0, 6.0, 0.95, 0, 1.35, false, false, -1);
+      addPoint([0.038, -0.068, 0.04], 16.0, 1.15, 0, 1.0, false, -1);
+      addPoint([0.058, -0.052, 0.04], 12.0, 1.20, 0, 1.0, false, -1);
+      addPoint([-0.045, -0.075, 0.04], 14.0, 0.95, 0, 1.0, false, -1);
 
-      // Micro-particles
       for (let i = 0; i < 420; i++) {
         const th = rand() * Math.PI * 2;
         const r  = 0.078 + Math.pow(rand(), 1.4) * 0.105;
         const z  = (rand() - 0.5) * 0.055;
         const p  = rot3D([Math.cos(th) * r, Math.sin(th) * r, z], (rand() - 0.5) * 0.3, (rand() - 0.5) * 0.3, 0);
         const isHot = rand() < 0.25;
-        addPoint(p, isHot ? 2.6 + rand() * 2.2 : 1.4 + rand() * 1.4, isHot ? 0.26 : 0.11, 0, isHot ? 1.0 : 0.2);
+        addPoint(p, isHot ? 2.6 + rand() * 2.2 : 1.4 + rand() * 1.4, isHot ? 0.26 : 0.11, 0, isHot ? 1.0 : 0.2, false, -1);
       }
 
-      // Shroud & Collars
       buildTrussArc({
         rInner: 0.120, rOuter: 0.175, zThickness: 0.065,
         startAng: 0, endAng: Math.PI * 2, steps: 72,
-        rx: 0.24, ry: -0.18, rz: 0.1, layer: 0, alpha: 0.35, heat: 0.70, combPinLen: 0.0, ribbonW: 2.8
+        rx: 0.24, ry: -0.18, rz: 0.1, layer: 0, alpha: 0.35, heat: 0.70, combPinLen: 0.0, ribbonW: 2.8, domain: -1
       });
       buildTrussArc({
         rInner: 0.25, rOuter: 0.35, zThickness: 0.09,
         startAng: Math.PI * 0.48, endAng: Math.PI * 1.48, steps: 64,
-        rx: 0.22, ry: 0.62, rz: -0.08, layer: 1, alpha: 0.56, heat: 0.88, combPinLen: 0.032, ribbonW: 4.2, denseComb: true
+        rx: 0.22, ry: 0.62, rz: -0.08, layer: 1, alpha: 0.56, heat: 0.88, combPinLen: 0.032, ribbonW: 4.2, denseComb: true, domain: 1
       });
       buildTrussArc({
         rInner: 0.38, rOuter: 0.44, zThickness: 0.07,
         startAng: Math.PI * 0.52, endAng: Math.PI * 1.42, steps: 60,
-        rx: 0.35, ry: 0.72, rz: -0.12, layer: 2, alpha: 0.52, heat: 0.85, combPinLen: 0.035, ribbonW: 4.0, denseComb: true
+        rx: 0.35, ry: 0.72, rz: -0.12, layer: 2, alpha: 0.52, heat: 0.85, combPinLen: 0.035, ribbonW: 4.0, denseComb: true, domain: 0
       });
       buildTrussArc({
         rInner: 0.26, rOuter: 0.36, zThickness: 0.08,
         startAng: -Math.PI * 0.38, endAng: Math.PI * 0.40, steps: 52,
-        rx: -0.26, ry: -0.58, rz: 0.12, layer: 1, alpha: 0.48, heat: 0.76, combPinLen: 0.028, ribbonW: 3.5, denseComb: true
+        rx: -0.26, ry: -0.58, rz: 0.12, layer: 1, alpha: 0.48, heat: 0.76, combPinLen: 0.028, ribbonW: 3.5, denseComb: true, domain: 6
       });
       buildTrussArc({
         rInner: 0.17, rOuter: 0.22, zThickness: 0.05,
         startAng: -Math.PI * 0.88, endAng: -Math.PI * 0.05, steps: 40,
-        rx: 0.82, ry: -0.25, rz: 0.14, layer: 1, alpha: 0.46, heat: 0.85, combPinLen: 0.020, ribbonW: 3.4, denseComb: false
+        rx: 0.82, ry: -0.25, rz: 0.14, layer: 1, alpha: 0.46, heat: 0.85, combPinLen: 0.020, ribbonW: 3.4, denseComb: false, domain: -1
       });
 
-      // 2. Primary Pathways
+      // 2. Primary Neural Trunks — Each mapped to a specific Semantic Domain (0..6)
       const radialDirections = [
-        [ 1.84,  0.06, 3, 4, 0.86, 0.042],
-        [ 1.26, -0.05, 2, 3, 0.84, 0.038],
-        [ 0.58,  0.14, 3, 2, 0.82, 0.035],
-        [-0.08, -0.06, 2, 3, 0.82, 0.036],
-        [-0.82,  0.12, 4, 4, 0.86, 0.040],
-        [-1.56,  0.04, 3, 4, 0.85, 0.038],
-        [-2.32,  0.15, 4, 4, 0.88, 0.042],
-        [ 1.55,  0.72, 2, 3, 0.80, 0.038],
-        [-1.35,  0.74, 4, 3, 0.82, 0.038],
-        [-2.65, -0.68, 3, 3, 0.82, 0.036]
+        [ 1.84,  0.06, 3, 4, 0.86, 0.042, 1], // Domain 1: Architecture & System Design
+        [ 1.26, -0.05, 2, 3, 0.84, 0.038, 2], // Domain 2: Code & Engineering
+        [ 0.58,  0.14, 3, 2, 0.82, 0.035, 3], // Domain 3: Diagnostics & Debugging
+        [-0.08, -0.06, 2, 3, 0.82, 0.036, 6], // Domain 6: Parallel Subagents
+        [-0.82,  0.12, 4, 4, 0.86, 0.040, 5], // Domain 5: Security & Audit
+        [-1.56,  0.04, 3, 4, 0.85, 0.038, 4], // Domain 4: Verification & TDD
+        [-2.32,  0.15, 4, 4, 0.88, 0.042, 0], // Domain 0: Long-term Memory & Context
+        [ 1.55,  0.72, 2, 3, 0.80, 0.038, 1], // Secondary Arch trunk
+        [-1.35,  0.74, 4, 3, 0.82, 0.038, 4], // Secondary Verify trunk
+        [-2.65, -0.68, 3, 3, 0.82, 0.036, 0]  // Secondary Memory trunk
       ];
 
       radialDirections.forEach((dir, idx) => {
         const theta = dir[0], elevation = dir[1], targetLayer = dir[2], numStrands = dir[3];
-        const rStart = 0.098, rEnd = dir[4], strandSpread = dir[5];
+        const rStart = 0.098, rEnd = dir[4], strandSpread = dir[5], domId = dir[6];
         const bundleCenterPts = [], strandArrays = [];
 
         for (let s = 0; s < numStrands; s++) {
@@ -1287,7 +1124,9 @@
             strandPts.push(p);
 
             if (s === 0) bundleCenterPts.push(p);
-            if (k > 3 && k < steps - 2 && k % 3 === 0) webAnchors[targetLayer].push(p);
+            if (k > 3 && k < steps - 2 && k % 3 === 0) {
+              webAnchors[targetLayer].push({ p, dom: domId });
+            }
           }
 
           const isMain = (s === 1);
@@ -1299,20 +1138,31 @@
             targetLayer,
             isMain ? 0.88 : 0.58,
             true,
-            true
+            true,
+            domId
           );
           strandArrays.push(strandPts);
+        }
+
+        // Record the primary synaptic hub coordinate for each of the 7 primary semantic domains
+        if (idx < 7) {
+          const hubPt = domId === 4
+            ? [-0.58, 0.06, 0.14]
+            : bundleCenterPts[Math.floor(bundleCenterPts.length * 0.82)];
+          NEURAL_DOMAINS[domId].anchorPos = hubPt;
+          NEURAL_DOMAINS[domId].layer = targetLayer + 10;
+          addPoint(hubPt, 8.5, 1.05, targetLayer, 1.0, true, domId);
         }
 
         const steps = strandArrays[0].length - 1;
         for (let k = 3; k < steps - 2; k += 2) {
           for (let s = 0; s < numStrands - 1; s++) {
-            if (rand() < 0.65) addLine(strandArrays[s][k], strandArrays[s + 1][k], 0.28, targetLayer, 0.60, true);
-            if (k + 1 <= steps && rand() < 0.50) addLine(strandArrays[s][k], strandArrays[s + 1][k + 1], 0.22, targetLayer, 0.52, true);
+            if (rand() < 0.65) addLine(strandArrays[s][k], strandArrays[s + 1][k], 0.28, targetLayer, 0.60, true, domId);
+            if (k + 1 <= steps && rand() < 0.50) addLine(strandArrays[s][k], strandArrays[s + 1][k + 1], 0.22, targetLayer, 0.52, true, domId);
           }
           if (k % 4 === 0) {
             const np = strandArrays[Math.floor(rand() * numStrands)][k];
-            addPoint(np, 3.8 + rand() * 3.0, 0.82, targetLayer, 1.0, true);
+            addPoint(np, 3.8 + rand() * 3.0, 0.82, targetLayer, 1.0, true, domId);
           }
         }
 
@@ -1320,22 +1170,23 @@
           points: bundleCenterPts,
           layer: targetLayer + 10,
           speed: 0.26 + rand() * 0.22,
-          dir: idx % 2 === 0 ? 1 : -1
+          dir: idx % 2 === 0 ? 1 : -1,
+          domain: domId
         });
       });
 
-      // Dendrites
+      // B. Dendrites mapped to their nearest semantic domain
       const dendriteSeeds = [
-        { ang:  2.95, z:  0.10, r0: 0.14, r1: 0.78, lay: 2 },
-        { ang:  2.65, z: -0.08, r0: 0.16, r1: 0.68, lay: 1 },
-        { ang: -2.75, z:  0.16, r0: 0.16, r1: 0.82, lay: 3 },
-        { ang:  0.28, z:  0.08, r0: 0.16, r1: 0.76, lay: 2 },
-        { ang: -0.25, z: -0.14, r0: 0.20, r1: 0.80, lay: 3 },
-        { ang:  1.42, z:  0.18, r0: 0.18, r1: 0.75, lay: 2 },
-        { ang: -1.18, z: -0.18, r0: 0.18, r1: 0.78, lay: 4 },
-        { ang: -1.92, z:  0.20, r0: 0.20, r1: 0.76, lay: 3 },
-        { ang:  0.72, z: -0.15, r0: 0.22, r1: 0.78, lay: 3 },
-        { ang:  2.15, z:  0.15, r0: 0.20, r1: 0.76, lay: 2 }
+        { ang:  2.95, z:  0.10, r0: 0.14, r1: 0.78, lay: 2, dom: 1 },
+        { ang:  2.65, z: -0.08, r0: 0.16, r1: 0.68, lay: 1, dom: 1 },
+        { ang: -2.75, z:  0.16, r0: 0.16, r1: 0.82, lay: 3, dom: 0 },
+        { ang:  0.28, z:  0.08, r0: 0.16, r1: 0.76, lay: 2, dom: 3 },
+        { ang: -0.25, z: -0.14, r0: 0.20, r1: 0.80, lay: 3, dom: 6 },
+        { ang:  1.42, z:  0.18, r0: 0.18, r1: 0.75, lay: 2, dom: 2 },
+        { ang: -1.18, z: -0.18, r0: 0.18, r1: 0.78, lay: 4, dom: 5 },
+        { ang: -1.92, z:  0.20, r0: 0.20, r1: 0.76, lay: 3, dom: 4 },
+        { ang:  0.72, z: -0.15, r0: 0.22, r1: 0.78, lay: 3, dom: 3 },
+        { ang:  2.15, z:  0.15, r0: 0.20, r1: 0.76, lay: 2, dom: 1 }
       ];
 
       dendriteSeeds.forEach((ds) => {
@@ -1351,9 +1202,9 @@
           const xyScale = Math.sqrt(Math.max(0.1, 1.0 - currZ * currZ * 0.4));
           const p = [r * xyScale * Math.cos(currAng), r * xyScale * Math.sin(currAng), r * currZ];
           pts.push(p);
-          if (k > 2 && k < steps - 1) webAnchors[ds.lay].push(p);
+          if (k > 2 && k < steps - 1) webAnchors[ds.lay].push({ p, dom: ds.dom });
 
-          if (k > 1 && k % 2 === 0) addPoint(p, 4.4 + rand() * 3.5, 0.88, ds.lay, 1.0, true);
+          if (k > 1 && k % 2 === 0) addPoint(p, 4.4 + rand() * 3.5, 0.88, ds.lay, 1.0, true, ds.dom);
 
           if (k >= 2 && k <= 9 && k % 2 === 0) {
             const forkPts = [p];
@@ -1364,32 +1215,32 @@
               fAng += (rand() - 0.5) * 0.18;
               const fp = [fr * Math.cos(fAng), fr * Math.sin(fAng), fr * fZ];
               forkPts.push(fp);
-              if (fr < 0.78) webAnchors[ds.lay].push(fp);
+              if (fr < 0.78) webAnchors[ds.lay].push({ p: fp, dom: ds.dom });
             }
             const smoothFork = evalCatmullRom(forkPts, 3);
-            addRibbon(smoothFork, 2.6, 1.0, 0.45, ds.lay, 0.74, true, true);
-            addPoint(smoothFork[smoothFork.length - 1], 7.5 + rand() * 4.5, 0.96, ds.lay, 1.0, true);
+            addRibbon(smoothFork, 2.6, 1.0, 0.45, ds.lay, 0.74, true, true, ds.dom);
+            addPoint(smoothFork[smoothFork.length - 1], 7.5 + rand() * 4.5, 0.96, ds.lay, 1.0, true, ds.dom);
           }
         }
 
         const smoothMain = evalCatmullRom(pts, 3);
-        addRibbon(smoothMain, 3.8, 1.4, 0.52, ds.lay, 0.88, true, true);
-        addPoint(smoothMain[smoothMain.length - 1], 8.5, 1.02, ds.lay, 1.0, true);
-        flowPaths.push({ points: smoothMain, layer: ds.lay + 10, speed: 0.28 + rand() * 0.18, dir: 1 });
+        addRibbon(smoothMain, 3.8, 1.4, 0.52, ds.lay, 0.88, true, true, ds.dom);
+        addPoint(smoothMain[smoothMain.length - 1], 8.5, 1.02, ds.lay, 1.0, true, ds.dom);
+        flowPaths.push({ points: smoothMain, layer: ds.lay + 10, speed: 0.28 + rand() * 0.18, dir: 1, domain: ds.dom });
       });
 
-      // 3. Shells
+      // 3. Outer Shells
       const midAndOuterArcs = [
-        { rIn: 0.48, rOut: 0.56, zT: 0.09, sA:  0.15, eA: Math.PI * 1.05, rx:  0.82, ry: -0.52, rz:  0.24, lay: 2, pin: 0.045, w: 3.2, a: 0.38, dense: true },
-        { rIn: 0.54, rOut: 0.62, zT: 0.09, sA:  Math.PI * 0.65, eA: Math.PI * 1.55, rx: -0.74, ry:  0.58, rz: -0.25, lay: 2, pin: 0.050, w: 3.2, a: 0.38, dense: true },
-        { rIn: 0.62, rOut: 0.70, zT: 0.10, sA: -Math.PI * 0.65, eA: Math.PI * 0.32, rx:  0.58, ry:  0.68, rz:  0.30, lay: 3, pin: 0.055, w: 3.4, a: 0.40, dense: true },
-        { rIn: 0.66, rOut: 0.72, zT: 0.06, sA: -Math.PI * 0.58, eA: Math.PI * 0.12, rx:  0.42, ry: -0.48, rz:  0.12, lay: 3, pin: 0.050, w: 4.4, a: 0.48, dense: true },
-        { rIn: 0.72, rOut: 0.82, zT: 0.12, sA:  Math.PI * 0.14, eA: Math.PI * 0.88, rx:  0.62, ry:  0.28, rz: -0.12, lay: 4, pin: 0.075, w: 3.6, a: 0.44, dense: true },
-        { rIn: 0.76, rOut: 0.84, zT: 0.11, sA:  Math.PI * 0.58, eA: Math.PI * 1.42, rx:  0.46, ry: -0.52, rz:  0.15, lay: 4, pin: 0.115, w: 3.5, a: 0.42, dense: true },
-        { rIn: 0.82, rOut: 0.90, zT: 0.10, sA:  Math.PI * 0.68, eA: Math.PI * 1.36, rx: -0.48, ry:  0.44, rz: -0.18, lay: 5, pin: 0.135, w: 3.2, a: 0.40, dense: true },
-        { rIn: 0.78, rOut: 0.86, zT: 0.10, sA: -Math.PI * 0.34, eA: Math.PI * 0.28, rx: -0.64, ry:  0.56, rz:  0.22, lay: 5, pin: 0.085, w: 3.2, a: 0.38, dense: true },
-        { rIn: 0.74, rOut: 0.82, zT: 0.10, sA:  0.1, eA: Math.PI * 1.25, rx:  1.18, ry:  0.48, rz: -0.42, lay: 4, pin: 0.070, w: 3.0, a: 0.35, dense: true },
-        { rIn: 0.80, rOut: 0.88, zT: 0.09, sA:  Math.PI * 0.55, eA: Math.PI * 1.75, rx: -1.10, ry:  0.72, rz:  0.35, lay: 5, pin: 0.080, w: 2.8, a: 0.34, dense: true }
+        { rIn: 0.48, rOut: 0.56, zT: 0.09, sA:  0.15, eA: Math.PI * 1.05, rx:  0.82, ry: -0.52, rz:  0.24, lay: 2, pin: 0.045, w: 3.2, a: 0.38, dense: true, dom: 2 },
+        { rIn: 0.54, rOut: 0.62, zT: 0.09, sA:  Math.PI * 0.65, eA: Math.PI * 1.55, rx: -0.74, ry:  0.58, rz: -0.25, lay: 2, pin: 0.050, w: 3.2, a: 0.38, dense: true, dom: 0 },
+        { rIn: 0.62, rOut: 0.70, zT: 0.10, sA: -Math.PI * 0.65, eA: Math.PI * 0.32, rx:  0.58, ry:  0.68, rz:  0.30, lay: 3, pin: 0.055, w: 3.4, a: 0.40, dense: true, dom: 5 },
+        { rIn: 0.66, rOut: 0.72, zT: 0.06, sA: -Math.PI * 0.58, eA: Math.PI * 0.12, rx:  0.42, ry: -0.48, rz:  0.12, lay: 3, pin: 0.050, w: 4.4, a: 0.48, dense: true, dom: 4 },
+        { rIn: 0.72, rOut: 0.82, zT: 0.12, sA:  Math.PI * 0.14, eA: Math.PI * 0.88, rx:  0.62, ry:  0.28, rz: -0.12, lay: 4, pin: 0.075, w: 3.6, a: 0.44, dense: true, dom: 1 },
+        { rIn: 0.76, rOut: 0.84, zT: 0.11, sA:  Math.PI * 0.58, eA: Math.PI * 1.42, rx:  0.46, ry: -0.52, rz:  0.15, lay: 4, pin: 0.115, w: 3.5, a: 0.42, dense: true, dom: 0 },
+        { rIn: 0.82, rOut: 0.90, zT: 0.10, sA:  Math.PI * 0.68, eA: Math.PI * 1.36, rx: -0.48, ry:  0.44, rz: -0.18, lay: 5, pin: 0.135, w: 3.2, a: 0.40, dense: true, dom: -1 },
+        { rIn: 0.78, rOut: 0.86, zT: 0.10, sA: -Math.PI * 0.34, eA: Math.PI * 0.28, rx: -0.64, ry:  0.56, rz:  0.22, lay: 5, pin: 0.085, w: 3.2, a: 0.38, dense: true, dom: 3 },
+        { rIn: 0.74, rOut: 0.82, zT: 0.10, sA:  0.1, eA: Math.PI * 1.25, rx:  1.18, ry:  0.48, rz: -0.42, lay: 4, pin: 0.070, w: 3.0, a: 0.35, dense: true, dom: -1 },
+        { rIn: 0.80, rOut: 0.88, zT: 0.09, sA:  Math.PI * 0.55, eA: Math.PI * 1.75, rx: -1.10, ry:  0.72, rz:  0.35, lay: 5, pin: 0.080, w: 2.8, a: 0.34, dense: true, dom: -1 }
       ];
 
       midAndOuterArcs.forEach((arc) => {
@@ -1397,17 +1248,20 @@
           rInner: arc.rIn, rOuter: arc.rOut, zThickness: arc.zT,
           startAng: arc.sA, endAng: arc.eA, steps: 78,
           rx: arc.rx, ry: arc.ry, rz: arc.rz,
-          layer: arc.lay, alpha: arc.a, heat: 0.62, combPinLen: arc.pin, ribbonW: arc.w, denseComb: arc.dense
+          layer: arc.lay, alpha: arc.a, heat: 0.62, combPinLen: arc.pin, ribbonW: arc.w, denseComb: arc.dense, domain: arc.dom
         });
       });
 
-      // 4. Spider-web
+      // 4. Spider-Web Associations
       for (let lay = 1; lay <= 5; lay++) {
         for (let k = 0; k < 85; k++) {
           const th = rand() * Math.PI * 2;
           const ph = Math.acos(2 * rand() - 1);
           const r = 0.18 + lay * 0.115 + (rand() - 0.5) * 0.07;
-          webAnchors[lay].push([r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)]);
+          webAnchors[lay].push({
+            p: [r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)],
+            dom: k % 7
+          });
         }
 
         const pts = webAnchors[lay];
@@ -1417,16 +1271,17 @@
 
         for (let i = 0; i < len; i++) {
           let connected = 0;
-          const pA = pts[i];
+          const itemA = pts[i];
+          const pA = itemA.p;
           for (let j = i + 1; j < len; j++) {
-            const pB = pts[j];
+            const pB = pts[j].p;
             const dx = pA[0] - pB[0], dy = pA[1] - pB[1], dz = pA[2] - pB[2];
             const d2 = dx * dx + dy * dy + dz * dz;
             if (d2 > 0.002 && d2 < maxDSq) {
               const ratio = 1.0 - Math.sqrt(d2) / maxD;
               const alpha = (0.11 + 0.26 * ratio);
-              addLine(pA, pB, alpha, lay, 0.38 + ratio * 0.40);
-              if (connected === 0 && rand() < 0.45) addPoint(pA, 2.8 + rand() * 2.0, alpha * 1.7, lay, 0.75);
+              addLine(pA, pB, alpha, lay, 0.38 + ratio * 0.40, false, itemA.dom);
+              if (connected === 0 && rand() < 0.45) addPoint(pA, 2.8 + rand() * 2.0, alpha * 1.7, lay, 0.75, false, itemA.dom);
               connected++;
               if (connected >= 5) break;
             }
@@ -1434,13 +1289,13 @@
         }
       }
 
-      // 5. Bokeh & Nodes
+      // 5. Bokeh & Background Nodes
       const clusterCenters = [
-        { x: -0.19, y: -0.11, z: 0.32, spread: 0.18, count: 24, sizeMin: 5, sizeMax: 13, lay: 2, bokeh: true },
-        { x: -0.02, y:  0.74, z: 0.20, spread: 0.25, count: 55, sizeMin: 5, sizeMax: 14, lay: 4, bokeh: true },
-        { x: -0.45, y: -0.02, z: 0.22, spread: 0.20, count: 36, sizeMin: 5, sizeMax: 13, lay: 3, bokeh: true },
-        { x:  0.52, y:  0.40, z: 0.15, spread: 0.20, count: 42, sizeMin: 4, sizeMax: 12, lay: 4, bokeh: false },
-        { x:  0.44, y: -0.42, z: -0.12, spread: 0.20, count: 40, sizeMin: 4, sizeMax: 12, lay: 3, bokeh: false }
+        { x: -0.19, y: -0.11, z: 0.32, spread: 0.18, count: 24, sizeMin: 5, sizeMax: 13, lay: 2, bokeh: true, dom: 0 },
+        { x: -0.02, y:  0.74, z: 0.20, spread: 0.25, count: 55, sizeMin: 5, sizeMax: 14, lay: 4, bokeh: true, dom: 1 },
+        { x: -0.45, y: -0.02, z: 0.22, spread: 0.20, count: 36, sizeMin: 5, sizeMax: 13, lay: 3, bokeh: true, dom: 0 },
+        { x:  0.52, y:  0.40, z: 0.15, spread: 0.20, count: 42, sizeMin: 4, sizeMax: 12, lay: 4, bokeh: false, dom: 2 },
+        { x:  0.44, y: -0.42, z: -0.12, spread: 0.20, count: 40, sizeMin: 4, sizeMax: 12, lay: 3, bokeh: false, dom: 5 }
       ];
 
       clusterCenters.forEach((cc) => {
@@ -1454,7 +1309,7 @@
           const isBokeh = cc.bokeh && rand() < 0.38;
           const sz = isBokeh ? cc.sizeMin + rand() * (cc.sizeMax - cc.sizeMin) : 2.6 + rand() * 4.0;
           const al = isBokeh ? 0.22 + rand() * 0.18 : 0.48 + rand() * 0.35;
-          addPoint(p, sz, al, cc.lay, isBokeh ? 2.0 : (rand() < 0.4 ? 1.0 : 0.3));
+          addPoint(p, sz, al, cc.lay, isBokeh ? 2.0 : (rand() < 0.4 ? 1.0 : 0.3), false, cc.dom);
         }
       });
 
@@ -1465,14 +1320,414 @@
         const p = [r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)];
         const lay = (i % 5) + 1;
         const isBright = rand() < 0.22;
-        addPoint(p, isBright ? 4.5 + rand() * 3.5 : 2.2 + rand() * 2.0, isBright ? 0.78 : 0.42, lay, isBright ? 1.0 : 0.1);
+        addPoint(p, isBright ? 4.5 + rand() * 3.5 : 2.2 + rand() * 2.0, isBright ? 0.78 : 0.42, lay, isBright ? 1.0 : 0.1, false, i % 7);
       }
     }
 
     buildCompleteJarvisSphere();
 
     // =========================================================================
-    // 4. FLOW PARTICLES (DYNAMIC REVERSAL & ACCELERATION)
+    // 4. DYNAMIC NEUROGENESIS ENGINE (ĐÂM CHỒI NHÁNH MỚI & LIÊN KẾT SYNAPSE)
+    // =========================================================================
+    const activeGrowBranches = []; // Branches that sprout from the core for each new request
+    const activeCallouts     = []; // 3D spatial labels projected onto active nodes
+
+    // Rebuilds dynamic WebGL geometry for newly sprouted branches & synaptic bridges
+    const bufDynRibbon = gl.createBuffer();
+    let numDynRibbonVerts = 0;
+
+    function rebuildDynamicNeurogenesisGeometry() {
+      dynRibbonVerts.length = 0;
+      dynMemoryNodes.length = 0;
+
+      // 1. Render all sprouted / growing Memory Branches from the Core
+      activeGrowBranches.forEach((br) => {
+        const totalPts = br.splinePts.length;
+        const visibleCount = Math.max(2, Math.floor(totalPts * br.growth));
+        const subPts = br.splinePts.slice(0, visibleCount);
+
+        // Main newly grown axon branch (Domain 7 = blazing newly-formed neural pathway)
+        pushRibbonTo(dynRibbonVerts, subPts, 6.2, 3.0, 0.96, br.layer, 1.45, true, true, 7);
+
+        // Growing tip blazing white-hot photon bud
+        const tipPt = subPts[subPts.length - 1];
+        dynMemoryNodes.push(
+          tipPt[0], tipPt[1], tipPt[2],
+          br.growth < 0.99 ? 16.0 : 11.5,
+          1.25,
+          br.layer + 10,
+          1.2,
+          7
+        );
+
+        // Secondary dendritic forks when branch reaches > 45% growth
+        if (br.growth > 0.45) {
+          const forkGrowth = Math.min(1.0, (br.growth - 0.45) / 0.55);
+          br.forks.forEach((fk) => {
+            const fCount = Math.max(2, Math.floor(fk.length * forkGrowth));
+            pushRibbonTo(dynRibbonVerts, fk.slice(0, fCount), 3.4, 1.5, 0.78, br.layer, 1.20, true, true, 7);
+            const fTip = fk[fCount - 1];
+            dynMemoryNodes.push(fTip[0], fTip[1], fTip[2], 7.5, 1.05, br.layer + 10, 1.0, 7);
+          });
+        }
+      });
+
+      // 2. Render all Synaptic Bridges linking the new branch to Skill Hubs & Prior Memory Nodes
+      synapticBridges.forEach((sb) => {
+        if (sb.growth <= 0.02) return;
+        const totalPts = sb.splinePts.length;
+        const visibleCount = Math.max(2, Math.floor(totalPts * sb.growth));
+        const subPts = sb.splinePts.slice(0, visibleCount);
+
+        pushRibbonTo(dynRibbonVerts, subPts, 3.6, 2.8, 0.84 * sb.intensity, sb.layer, 1.35, true, true, 7);
+
+        // Travelling synaptic impulse along the bridge
+        const pulseIdx = Math.min(totalPts - 1, Math.floor(((performance.now() * 0.0018 * sb.speed) % 1.0) * totalPts));
+        if (pulseIdx < visibleCount) {
+          const pp = sb.splinePts[pulseIdx];
+          dynMemoryNodes.push(pp[0], pp[1], pp[2], 8.5, 1.2 * sb.intensity, sb.layer + 10, 1.2, 7);
+        }
+      });
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufDynRibbon);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dynRibbonVerts), gl.DYNAMIC_DRAW);
+      numDynRibbonVerts = dynRibbonVerts.length / 13;
+    }
+
+    // Semantic Analyzer + Neurogenesis Trigger for User Requests
+    const BUILTIN_SCENARIOS = [
+      {
+        prompt: 'Thiết kế kiến trúc API xác thực JWT có phân quyền RBAC',
+        memTag: 'MEM#01 // JWT_RBAC_SPEC',
+        domains: [1, 5, 0], // Arch + Security + Memory
+        steps: [
+          'Định tuyến ngữ nghĩa: Kích hoạt bó sợi trục [ARCH // backend-architect] & [SEC // auth-patterns]',
+          'Đâm chồi nơ-ron mới [MEM#01 // JWT_RBAC_SPEC] từ Lõi trung tâm ra vùng Tây-Bắc',
+          'Phóng cầu nối Synapse liên kết [JWT_RBAC_SPEC] ⟷ [backend-architect] & [security-auditor]',
+          'Hoàn tất cấu trúc: Access Token (15m RS256) + Refresh Token Rotation + Middleware RBAC 3 tầng'
+        ]
+      },
+      {
+        prompt: 'Viết module Python FastAPI thực thi xác thực cho API vừa thiết kế',
+        memTag: 'MEM#02 // PY_AUTH_MODULE',
+        domains: [2, 1, 0], // Code + Arch + Memory
+        steps: [
+          'Truy xuất ký ức: Phát hiện mối liên hệ trực tiếp với nút nơ-ron trước đó [MEM#01 // JWT_RBAC_SPEC]',
+          'Đâm chồi nhánh nơ-ron [MEM#02 // PY_AUTH_MODULE] và bắt cầu Synapse nối thẳng vào [MEM#01]',
+          'Kích hoạt bó sợi trục [CODE // python-pro] tổng hợp bất đồng bộ OAuth2PasswordBearer & PyJWT',
+          'Đã tạo xong module xác thực bất đồng bộ liên kết chặt chẽ với kiến trúc RBAC của MEM#01'
+        ]
+      },
+      {
+        prompt: 'Chạy kiểm thử TDD và quét lỗ hổng SQL Injection cho module Python đó',
+        memTag: 'MEM#03 // TDD_SEC_AUDIT',
+        domains: [4, 5, 3], // Verify/TDD + Security + Debug
+        steps: [
+          'Liên kết chuỗi ký ức: Bắt cầu nối Synapse từ nhánh mới [MEM#03] tới cả [MEM#02] và [MEM#01]',
+          'Kích hoạt đồng thời [VERIFY // test-driven-development] & [SEC // security-auditor]',
+          'Phát hiện 1 truy vấn chuỗi thô tiềm ẩn SQLi -> Tự động chuyển sang Parameterized Query',
+          'Xác nhận 100% bài test (14/14 cases) vượt qua an toàn, lưu vết kiểm định vào đồ thị nơ-ron'
+        ]
+      },
+      {
+        prompt: 'Tối ưu bộ nhớ đệm Redis và điều phối Subagents chạy tải song song',
+        memTag: 'MEM#04 // SWARM_CACHE_OPT',
+        domains: [6, 0, 2], // Parallel Swarm + Memory + Code
+        steps: [
+          'Kích hoạt trục sâu 3D [SWARM // dispatching-parallel-agents] & [MEMORY // rag-implementation]',
+          'Đâm chồi nhánh [MEM#04 // SWARM_CACHE_OPT] và nối mạng lưới Synapse liên thông với [MEM#01..#03]',
+          'Phân tách 2 luồng Subagents độc lập: Luồng 1 tối ưu Redis TTL, Luồng 2 nén payload phản hồi',
+          'Độ trễ toàn hệ thống giảm từ 48ms xuống 6.2ms — Đồ thị nơ-ron hoàn tất hợp nhất 4 cụm ký ức'
+        ]
+      }
+    ];
+
+    function inferScenarioFromPrompt(rawText) {
+      const lower = rawText.toLowerCase();
+      // Check if matches one of the 4 guided scenarios
+      for (let i = 0; i < BUILTIN_SCENARIOS.length; i++) {
+        if (rawText === BUILTIN_SCENARIOS[i].prompt) return BUILTIN_SCENARIOS[i];
+      }
+
+      // Dynamic semantic inference for ANY custom prompt typed by the user!
+      const matchedDomains = new Set();
+      if (/api|kiến trúc|thiết kế|system|design|schema|database|db|microservice/.test(lower)) matchedDomains.add(1);
+      if (/code|viết|hàm|python|js|typescript|react|html|thuật toán|function|module|class|tối ưu/.test(lower)) matchedDomains.add(2);
+      if (/lỗi|bug|fix|sửa|debug|crash|slow|chậm|leak/.test(lower)) matchedDomains.add(3);
+      if (/test|tdd|kiểm thử|verify|check|kiểm tra|unit/.test(lower)) matchedDomains.add(4);
+      if (/bảo mật|security|auth|jwt|sql|xss|token|login|đăng nhập|hack|audit/.test(lower)) matchedDomains.add(5);
+      if (/song song|subagent|parallel|đa luồng|swarm|nhiều agent/.test(lower)) matchedDomains.add(6);
+      if (/nhớ|memory|cũ|vừa|trước đó|rag|context|lịch sử/.test(lower)) matchedDomains.add(0);
+
+      if (matchedDomains.size === 0) {
+        matchedDomains.add(1);
+        matchedDomains.add(2);
+      }
+      if (memoryNodes.length > 0) matchedDomains.add(0);
+
+      const domArr = Array.from(matchedDomains);
+      const memIndex = memoryNodes.length + 1;
+      const shortWords = rawText.trim().split(/\s+/).slice(0, 3).join('_').toUpperCase();
+      const memTag = `MEM#0${memIndex} // ${shortWords}`;
+
+      const domNames = domArr.map(d => NEURAL_DOMAINS[d].skill).join(' + ');
+      const priorRef = memoryNodes.length > 0
+        ? `Liên kết ngược với ký ức trước [${memoryNodes[memoryNodes.length - 1].tag}]`
+        : 'Khởi tạo nút ký ức gốc đầu tiên trong phiên làm việc';
+
+      return {
+        prompt: rawText,
+        memTag: memTag,
+        domains: domArr,
+        steps: [
+          `Phân tích ngữ nghĩa yêu cầu -> Kích hoạt miền kỹ năng [${domNames}]`,
+          `Đâm chồi nhánh nơ-ron mới [${memTag}] từ Lõi trung tâm ra không gian 3D`,
+          `${priorRef} & phóng cầu nối Synapse sang các kỹ năng liên quan`,
+          `Thực thi hoàn tất "${rawText}" — Nhánh nơ-ron [${memTag}] đã được lưu vào bộ não J.A.R.V.I.S.`
+        ]
+      };
+    }
+
+    let stepTimer = null;
+
+    function executeNeuralRequest(scenario) {
+      if (stepTimer) clearTimeout(stepTimer);
+
+      // 1. Hebbian Domain Weighting: Highlight active domains (1.85x), dim unrelated ones (0.20x)
+      for (let d = 0; d < 7; d++) {
+        targetDomainWeights[d] = scenario.domains.includes(d) ? 1.85 : 0.20;
+      }
+
+      // 2. Compute 3D direction for the new Memory Branch (sprouting into a distinct 3D sector)
+      const memIdx = memoryNodes.length;
+      const memSectorThetas = [2.42, 0.86, -0.45, -1.92, 1.54, -1.12];
+      const baseTheta = memSectorThetas[memIdx % memSectorThetas.length] + Math.floor(memIdx / 6) * 0.18;
+      const baseElev  = ((memIdx % 2 === 0 ? 1 : -1) * 0.14);
+      const targetLayer = 2 + (memIdx % 3);
+
+      const rStart = 0.092;
+      const rEnd   = 0.63 + (memIdx % 3) * 0.055;
+      const ctrlPts = [];
+      const steps = 8;
+
+      for (let k = 0; k <= steps; k++) {
+        const t = k / steps;
+        const r = rStart + (rEnd - rStart) * t;
+        const th = baseTheta + Math.sin(t * Math.PI * 1.5 + memIdx) * 0.12;
+        const el = baseElev  + Math.cos(t * Math.PI * 1.2 + memIdx) * 0.08;
+        ctrlPts.push([
+          r * Math.cos(el) * Math.cos(th),
+          r * Math.cos(el) * Math.sin(th),
+          r * Math.sin(el)
+        ]);
+      }
+
+      const smoothBranchPts = evalCatmullRom(ctrlPts, 4);
+      const tipPos = smoothBranchPts[smoothBranchPts.length - 1];
+
+      // Create 2 organic dendritic forks at the end of the new branch
+      const forks = [];
+      for (let f = 0; f < 2; f++) {
+        const forkStartIdx = Math.floor(smoothBranchPts.length * (0.62 + f * 0.15));
+        const pOrigin = smoothBranchPts[forkStartIdx];
+        const fCtrl = [pOrigin];
+        let fTh = baseTheta + (f === 0 ? 0.24 : -0.24);
+        let fEl = baseElev + (f === 0 ? 0.14 : -0.14);
+        for (let s = 1; s <= 3; s++) {
+          const fr = (rStart + (rEnd - rStart) * 0.65) + s * 0.055;
+          fCtrl.push([
+            fr * Math.cos(fEl) * Math.cos(fTh),
+            fr * Math.cos(fEl) * Math.sin(fTh),
+            fr * Math.sin(fEl)
+          ]);
+          fTh += (f === 0 ? 0.08 : -0.08);
+        }
+        forks.push(evalCatmullRom(fCtrl, 3));
+      }
+
+      const newBranch = {
+        tag: scenario.memTag,
+        prompt: scenario.prompt,
+        splinePts: smoothBranchPts,
+        forks: forks,
+        tipPos: tipPos,
+        layer: targetLayer,
+        growth: 0.04,
+        domains: scenario.domains
+      };
+      activeGrowBranches.push(newBranch);
+
+      // Register in persistent session memory nodes
+      const newMemNode = {
+        id: memoryNodes.length,
+        tag: scenario.memTag,
+        sub: scenario.prompt.slice(0, 38) + (scenario.prompt.length > 38 ? '...' : ''),
+        pos: tipPos,
+        layer: targetLayer + 10,
+        domains: scenario.domains
+      };
+      memoryNodes.push(newMemNode);
+
+      // Add photon flow along the newly sprouted neural branch
+      flowPaths.push({
+        points: smoothBranchPts,
+        layer: targetLayer + 10,
+        speed: 0.48,
+        dir: 1,
+        domain: 7
+      });
+
+      // 3. Create Synaptic Bridges from this new Memory Node to:
+      //    (a) Each activated Skill Domain Hub
+      //    (b) Related prior Memory Nodes from earlier requests in this session!
+      const newBridges = [];
+
+      scenario.domains.forEach((domId) => {
+        const domHub = NEURAL_DOMAINS[domId].anchorPos;
+        if (!domHub) return;
+        const mid = [
+          (tipPos[0] + domHub[0]) * 0.55 + (rand() - 0.5) * 0.08,
+          (tipPos[1] + domHub[1]) * 0.55 + (rand() - 0.5) * 0.08,
+          (tipPos[2] + domHub[2]) * 0.55 + (rand() - 0.5) * 0.08
+        ];
+        const bridgeSpline = evalCatmullRom([tipPos, mid, domHub], 5);
+        const brObj = {
+          splinePts: bridgeSpline,
+          layer: targetLayer,
+          growth: 0.0,
+          growing: false,
+          intensity: 1.15,
+          speed: 0.9 + rand() * 0.4
+        };
+        synapticBridges.push(brObj);
+        newBridges.push(brObj);
+
+        flowPaths.push({
+          points: bridgeSpline,
+          layer: targetLayer + 10,
+          speed: 0.52,
+          dir: 1,
+          domain: 7
+        });
+      });
+
+      // Connect to prior Memory Nodes (demonstrating how new thoughts link to past thoughts!)
+      if (memoryNodes.length > 1) {
+        const prevMem = memoryNodes[memoryNodes.length - 2];
+        const mid = [
+          (tipPos[0] + prevMem.pos[0]) * 0.52 + (rand() - 0.5) * 0.06,
+          (tipPos[1] + prevMem.pos[1]) * 0.52 + (rand() - 0.5) * 0.06,
+          (tipPos[2] + prevMem.pos[2]) * 0.52 + (rand() - 0.5) * 0.06
+        ];
+        const memBridgeSpline = evalCatmullRom([tipPos, mid, prevMem.pos], 5);
+        const memBrObj = {
+          splinePts: memBridgeSpline,
+          layer: targetLayer,
+          growth: 0.0,
+          growing: false,
+          intensity: 1.40,
+          speed: 1.15
+        };
+        synapticBridges.push(memBrObj);
+        newBridges.push(memBrObj);
+
+        flowPaths.push({
+          points: memBridgeSpline,
+          layer: targetLayer + 10,
+          speed: 0.58,
+          dir: -1,
+          domain: 7
+        });
+      }
+
+      // 4. Update 3D Spatial Callout Labels (highlight active Skill Hubs, dim inactive, show Memory Nodes)
+      rebuildSpatialCallouts(scenario.domains, newMemNode);
+
+      // 5. Gently rotate camera toward the newly sprouting neural branch so user sees it clearly
+      const targetAngle = Math.atan2(tipPos[0], tipPos[2]);
+      targetYaw = -targetAngle * 0.35;
+      targetPitch = Math.max(-0.45, Math.min(0.45, -tipPos[1] * 0.35));
+
+      // 6. Step-by-step live narrative readout at bottom
+      const readoutEl = document.getElementById('neural-readout');
+      readoutEl.classList.add('visible');
+
+      function runStep(sIdx) {
+        if (sIdx >= scenario.steps.length) {
+          setTimeout(() => {
+            for (let d = 0; d < 7; d++) {
+              targetDomainWeights[d] = scenario.domains.includes(d) ? 1.35 : 0.58;
+            }
+          }, 2200);
+          return;
+        }
+        const phaseLabels = ['[01 // ROUTING]', '[02 // NEUROGENESIS]', '[03 // SYNAPSE LINK]', '[04 // CONSOLIDATED]'];
+        readoutEl.innerHTML = `<span class="stream-phase">${phaseLabels[sIdx] || '[PROCESS]'}</span><span class="stream-output">${scenario.steps[sIdx]}</span>`;
+
+        if (sIdx >= 1) {
+          // Trigger synaptic bridge growth right as the branch sprouts
+          newBridges.forEach(b => { b.growing = true; });
+        }
+
+        stepTimer = setTimeout(() => runStep(sIdx + 1), 1350);
+      }
+
+      runStep(0);
+    }
+
+    // Manage 3D projected DOM callouts for all 7 Skill Hubs & grown Memory Nodes
+    const spatialContainer = document.getElementById('spatial-labels');
+
+    function rebuildSpatialCallouts(activeDomIds, latestMemNode) {
+      spatialContainer.innerHTML = '';
+      activeCallouts.length = 0;
+
+      // Render all 7 primary Skill Domain Hubs in 3D space (dimmed if unrelated, bright if active)
+      NEURAL_DOMAINS.forEach((dom) => {
+        if (!dom || !dom.anchorPos) return;
+        const isActive = activeDomIds ? activeDomIds.includes(dom.id) : false;
+        const isDimmed = activeDomIds ? !isActive : false;
+
+        const el = document.createElement('div');
+        el.className = 'node-callout' + (isActive ? ' is-active' : '') + (isDimmed ? ' is-dimmed' : '');
+        el.innerHTML = `
+          <span class="pin-dot"></span><span class="leader-line"></span><span class="label-text">${dom.code}</span>
+          <span class="label-sub">${dom.skill}</span>
+        `;
+        spatialContainer.appendChild(el);
+        activeCallouts.push({
+          el: el,
+          pos: dom.anchorPos,
+          layer: dom.layer || 13,
+          baseOpacity: isActive ? 1.0 : (isDimmed ? 0.16 : 0.56)
+        });
+      });
+
+      // Add callouts for persistent Memory Nodes (newly grown + prior connected memories)
+      const memToShow = memoryNodes.slice(-4);
+      memToShow.forEach((mn) => {
+        const el = document.createElement('div');
+        el.className = 'node-callout is-memory';
+        el.innerHTML = `
+          <span class="pin-dot"></span><span class="leader-line"></span><span class="label-text">${mn.tag}</span>
+          <span class="label-sub">${mn.sub}</span>
+        `;
+        spatialContainer.appendChild(el);
+        activeCallouts.push({
+          el: el,
+          pos: mn.pos,
+          layer: mn.layer,
+          baseOpacity: 1.0,
+          isLatest: mn === latestMemNode
+        });
+      });
+    }
+
+    // Initialize the 7 Skill Hub 3D spatial micro-callouts on startup
+    rebuildSpatialCallouts(null, null);
+
+    // =========================================================================
+    // 5. LAMINAR PHOTON DATA STREAMS ALONG NEURAL PATHWAYS
     // =========================================================================
     const NUM_FLOW_PARTICLES = 1350;
     const flowParticles = [];
@@ -1489,25 +1744,34 @@
       });
     }
 
-    const totalStaticNodes = staticNodes.length / 7;
-    const dynamicNodeArray = new Float32Array((totalStaticNodes + NUM_FLOW_PARTICLES * 2) * 7);
+    const totalStaticNodes = staticNodes.length / 8;
+    const MAX_DYN_MEM_NODES = 120;
+    const dynamicNodeArray = new Float32Array((totalStaticNodes + MAX_DYN_MEM_NODES + NUM_FLOW_PARTICLES * 2) * 8);
     dynamicNodeArray.set(staticNodes, 0);
 
-    function updateFlowParticles(dt, speedMul, forceDir = 0) {
-      let offset = totalStaticNodes * 7;
+    function updateFlowParticles(dt, speedMul) {
+      // First copy any dynamic memory nodes
+      const memLen = Math.min(dynMemoryNodes.length, MAX_DYN_MEM_NODES * 8);
+      let offset = totalStaticNodes * 8;
+      for (let i = 0; i < memLen; i++) {
+        dynamicNodeArray[offset++] = dynMemoryNodes[i];
+      }
 
       for (let i = 0; i < NUM_FLOW_PARTICLES; i++) {
         const fp = flowParticles[i];
+        // Reassign some particles to newly created neurogenesis paths so they visibly stream with photons
+        if (i < 240 && flowPaths.length > 20) {
+          fp.pathIdx = flowPaths.length - 1 - (i % Math.min(8, flowPaths.length));
+        }
         const path = flowPaths[fp.pathIdx];
         const pts = path.points;
         const maxIdx = pts.length - 1;
+        if (maxIdx < 1) continue;
 
-        let curDir = fp.speed;
-        if (forceDir !== 0) {
-          curDir = Math.abs(fp.speed) * forceDir;
-        }
+        const domId = path.domain !== undefined ? path.domain : -1;
+        const domBoost = (domId >= 0 && domId < 7) ? domainWeights[domId] : (domId === 7 ? 1.85 : 1.0);
 
-        fp.t = (fp.t + curDir * speedMul * dt) % 1.0;
+        fp.t = (fp.t + fp.speed * speedMul * (0.65 + 0.45 * domBoost) * dt) % 1.0;
         if (fp.t < 0) fp.t += 1.0;
 
         const exactIdx = fp.t * maxIdx;
@@ -1529,8 +1793,9 @@
         dynamicNodeArray[offset++] = fp.alpha * fadeEdge;
         dynamicNodeArray[offset++] = path.layer;
         dynamicNodeArray[offset++] = 1.0;
+        dynamicNodeArray[offset++] = domId;
 
-        let trailT = fp.t - (curDir > 0 ? 0.028 : -0.028);
+        let trailT = fp.t - (fp.speed > 0 ? 0.028 : -0.028);
         if (trailT < 0) trailT += 1.0;
         if (trailT >= 1.0) trailT -= 1.0;
         const tIdx = trailT * maxIdx;
@@ -1546,26 +1811,28 @@
         dynamicNodeArray[offset++] = fp.alpha * fadeEdge * 0.5;
         dynamicNodeArray[offset++] = path.layer;
         dynamicNodeArray[offset++] = 0.25;
+        dynamicNodeArray[offset++] = domId;
       }
+
+      return offset / 8;
     }
 
     // =========================================================================
-    // 5. BUFFERS & FRAMEBUFFERS
+    // 6. WEBGL BUFFERS & MULTI-PASS BLOOM FRAMEBUFFERS
     // =========================================================================
     const bufRibbon = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufRibbon);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(ribbonVerts), gl.STATIC_DRAW);
-    const numRibbonVerts = ribbonVerts.length / 12;
+    const numRibbonVerts = ribbonVerts.length / 13;
 
     const bufWeb = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufWeb);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(webVerts), gl.STATIC_DRAW);
-    const numWebVerts = webVerts.length / 6;
+    const numWebVerts = webVerts.length / 7;
 
     const bufNodes = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufNodes);
     gl.bufferData(gl.ARRAY_BUFFER, dynamicNodeArray, gl.DYNAMIC_DRAW);
-    const numTotalNodes = dynamicNodeArray.length / 7;
 
     const bufQuad = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufQuad);
@@ -1610,225 +1877,7 @@
     initFBOs();
 
     // =========================================================================
-    // 6. PIPELINE STATE MACHINE & TELEMETRY ENGINE
-    // =========================================================================
-    const PIPELINE_STAGES = [
-      { id: 0, name: 'IDLE // STANDBY MONITORING', freq: '42.4 Hz', velocity: '1.0 c', excitation: 0.0, speedMul: 1.0, forceDir: 0 },
-      { id: 1, name: 'INGESTING USER INTENT // INWARD CASCADE', freq: '68.2 Hz', velocity: '2.8 c', excitation: 0.6, speedMul: 2.8, forceDir: -1 },
-      { id: 2, name: 'DECOMPOSING REASONING GRAPH & ROUTING', freq: '86.5 Hz', velocity: '2.2 c', excitation: 0.75, speedMul: 2.2, forceDir: 1 },
-      { id: 3, name: 'DISPATCHING SPECIALIZED SKILL WORKERS', freq: '94.8 Hz', velocity: '3.6 c', excitation: 0.9, speedMul: 3.6, forceDir: 1 },
-      { id: 4, name: 'ORCHESTRATING PARALLEL SUBAGENT SWARM', freq: '98.2 Hz', velocity: '4.2 c', excitation: 1.0, speedMul: 4.2, forceDir: 0 },
-      { id: 5, name: 'RUNNING TDD & HARMONIC VERIFICATION', freq: '84.0 Hz', velocity: '2.5 c', excitation: 0.65, speedMul: 2.5, forceDir: 1 },
-      { id: 6, name: 'SYNTHESIZING KNOWLEDGE // DELIVERING OUTPUT', freq: '55.0 Hz', velocity: '1.4 c', excitation: 0.4, speedMul: 1.4, forceDir: -1 }
-    ];
-
-    let currentStageIndex = 0;
-    let isPipelineRunning = false;
-    let pipelineTimer = null;
-    let isPaused = false;
-    let activeExcitation = 0.0;
-    let activeSpeedMul = 1.0;
-    let activeForceDir = 0;
-
-    const PRESET_DATA = [
-      {
-        title: 'Phân tích Kiến trúc & Định tuyến',
-        skill: 'architecture-patterns / ai-engineer',
-        steps: [
-          'Phân tích cây phụ thuộc mã nguồn và giải mã ngữ cảnh',
-          'Khởi tạo đồ thị phân rã ý định (Intent Routing Graph)',
-          'Nạp chỉ dẫn kỹ năng `architecture-patterns` & Clean Architecture',
-          'Kiểm chứng tính toàn vẹn và xác lập ranh giới mô-đun'
-        ],
-        result: 'Kiến trúc hệ thống được phân rã thành 4 phân tầng độc lập. Ranh giới mô-đun tuân thủ Clean Architecture; độ trễ giảm 34%.'
-      },
-      {
-        title: 'Lập trình TDD & Tự sửa lỗi (Self-Healing Loop)',
-        skill: 'test-driven-development / python-pro',
-        steps: [
-          'Thiết lập bài kiểm thử đơn vị Red Phase trước khi viết mã nguồn',
-          'Phát hiện 2 trường hợp biên chưa được bao phủ (Boundary Coverage)',
-          'Tự động sinh mã nguồn tối ưu Green Phase và refactor sạch',
-          'Vượt qua 100% test suites không có hồi quy (Zero Regressions)'
-        ],
-        result: 'Đã hoàn tất quy trình TDD. 18 bài test vượt qua thành công, bao phủ 98.7% nhánh logic mã nguồn.'
-      },
-      {
-        title: 'Điều phối Subagents Song song (Multi-Agent Swarm)',
-        skill: 'dispatching-parallel-agents / subagent-driven-development',
-        steps: [
-          'Phát hiện 3 nhánh tác vụ độc lập không chia sẻ trạng thái chung',
-          'Khởi tạo Subagent 1 (Backend Specialist) & Subagent 2 (Security Auditor)',
-          'Trao đổi tín hiệu chéo đa luồng qua mạng lưới nơ-ron',
-          'Đồng bộ hóa kết quả vào nhánh chính không xung đột'
-        ],
-        result: 'Đã hoàn tất xử lý song song với 2 Subagents độc lập. Thời gian thực thi giảm 58% so với tuần tự.'
-      },
-      {
-        title: 'Quét Lỗ hổng Bảo mật & Security Hardening',
-        skill: 'security-auditor / sast-configuration',
-        steps: [
-          'Quét phân tích tĩnh đa lớp (SAST) trên toàn bộ codebase',
-          'Phát hiện cảnh báo tiềm ẩn về chuỗi kết nối và cấp quyền',
-          'Áp dụng quy tắc phòng vệ chủ động (Defensive Hardening)',
-          'Xác nhận đạt tiêu chuẩn bảo mật OWASP Top 10'
-        ],
-        result: 'Đã quét 4,120 dòng mã. 0 lỗ hổng nghiêm trọng, đã cấu hình chính sách bảo mật đa tầng thành công.'
-      }
-    ];
-
-    let currentPreset = PRESET_DATA[0];
-
-    function addLogEntry(text, isHighlight = false) {
-      const stream = document.getElementById('log-stream');
-      const entry = document.createElement('div');
-      entry.className = 'log-entry' + (isHighlight ? ' highlight' : '');
-      const timeStr = new Date().toTimeString().split(' ')[0] + '.' + Math.floor(Date.now() % 1000);
-      entry.innerHTML = `<div class="time">[${timeStr}]</div><div>${text}</div>`;
-      stream.insertBefore(entry, stream.firstChild);
-    }
-
-    function updateHud(stage) {
-      document.getElementById('status-text').innerText = stage.name;
-      document.getElementById('metric-freq').innerText = stage.freq;
-      document.getElementById('metric-velocity').innerText = stage.velocity;
-
-      const pills = document.querySelectorAll('.stage-pill');
-      pills.forEach((p, idx) => {
-        p.classList.toggle('active', idx === stage.id);
-      });
-    }
-
-    function setPipelineStage(idx) {
-      currentStageIndex = idx;
-      const st = PIPELINE_STAGES[idx];
-      activeExcitation = st.excitation;
-      activeSpeedMul = st.speedMul;
-      activeForceDir = st.forceDir;
-
-      updateHud(st);
-
-      if (idx === 1) {
-        playSweep(160, 480, 0.4);
-        addLogEntry('INGESTION: Lõi thần kinh hấp thụ dữ liệu yêu cầu // Sóng hạt hội tụ', true);
-      } else if (idx === 2) {
-        playTone(320, 0.2, 'triangle', 0.09);
-        addLogEntry('ROUTING: Phân tích cây ý định -> Ánh xạ vào các bó sợi nơ-ron');
-      } else if (idx === 3) {
-        playTone(440, 0.25, 'sine', 0.1);
-        addLogEntry(`SKILL DISPATCH: Kích hoạt chuyên gia [${currentPreset.skill}]`, true);
-      } else if (idx === 4) {
-        playTone(520, 0.3, 'triangle', 0.08);
-        addLogEntry('PARALLEL SWARM: Khởi tạo các Subagents độc lập ở hai bán cầu');
-      } else if (idx === 5) {
-        playTone(660, 0.25, 'sine', 0.1);
-        addLogEntry('VERIFICATION: Chạy kiểm thử tự động // Sóng cộng hưởng hài hòa đạt chuẩn');
-      } else if (idx === 6) {
-        playChord();
-        addLogEntry('SYNTHESIS: Hội tụ tri thức về Lõi trung tâm // Xuất báo cáo kết quả', true);
-        showResultModal();
-      } else {
-        addLogEntry('STANDBY: Trạng thái nghỉ nhàn rỗi // Đang lắng nghe yêu cầu mới');
-      }
-    }
-
-    function startAutoPipeline() {
-      if (pipelineTimer) clearTimeout(pipelineTimer);
-      isPipelineRunning = true;
-      closeResultModal();
-
-      const stageDurations = [0, 1800, 2400, 3000, 3200, 2600, 3500];
-
-      function advance(step) {
-        if (!isPipelineRunning) return;
-        setPipelineStage(step);
-        if (step < 6) {
-          pipelineTimer = setTimeout(() => advance(step + 1), stageDurations[step + 1]);
-        } else {
-          pipelineTimer = setTimeout(() => {
-            isPipelineRunning = false;
-            setPipelineStage(0);
-          }, 6000);
-        }
-      }
-
-      advance(1);
-    }
-
-    function executePreset(presetIdx) {
-      initAudio();
-      currentPreset = PRESET_DATA[presetIdx];
-      document.getElementById('prompt-input').value = currentPreset.title;
-      addLogEntry(`KÍCH HOẠT QUY TRÌNH: [${currentPreset.title}]`, true);
-      startAutoPipeline();
-    }
-
-    function submitPrompt() {
-      initAudio();
-      const input = document.getElementById('prompt-input');
-      const val = input.value.trim();
-      if (!val) return;
-      currentPreset = {
-        title: val,
-        skill: 'ai-engineer / prompt-engineering-patterns',
-        steps: [
-          'Phân tích yêu cầu tùy biến của người dùng',
-          'Định tuyến intent tới các kỹ năng nạp động (Dynamic Skills)',
-          'Khởi tạo đồ thị nơ-ron tính toán và giải quyết tác vụ',
-          'Kiểm tra và xác thực tính đúng đắn trước khi hoàn tất'
-        ],
-        result: `Tác vụ "${val}" đã được hệ thống J.A.R.V.I.S. thực thi thành công qua toàn bộ quy trình kiểm định.`
-      };
-      addLogEntry(`TIẾP NHẬN YÊU CẦU: "${val}"`, true);
-      startAutoPipeline();
-    }
-
-    function handlePromptKey(e) {
-      if (e.key === 'Enter') submitPrompt();
-    }
-
-    function resetPipeline() {
-      if (pipelineTimer) clearTimeout(pipelineTimer);
-      isPipelineRunning = false;
-      closeResultModal();
-      setPipelineStage(0);
-      addLogEntry('HỆ THỐNG ĐÃ ĐƯỢC RESET VỀ TRẠNG THÁI NGHỈ BAN ĐẦU');
-    }
-
-    function togglePause() {
-      isPaused = !isPaused;
-      const btn = document.getElementById('btn-pause');
-      btn.innerText = isPaused ? '▶ Resume' : '⏯ Pause';
-      btn.classList.toggle('active', isPaused);
-      addLogEntry(isPaused ? 'TẠM DỪNG CHUYỂN ĐỘNG' : 'TIẾP TỤC HOẠT ĐỘNG');
-    }
-
-    function toggleLogs() {
-      const drawer = document.getElementById('log-drawer');
-      const btn = document.getElementById('btn-logs');
-      drawer.classList.toggle('open');
-      btn.classList.toggle('active');
-    }
-
-    function showResultModal() {
-      const modal = document.getElementById('result-modal');
-      const content = document.getElementById('result-content');
-      let html = `<div style="font-weight: 600; font-size: 13px; color: #FFF0AA; margin-bottom: 8px;">${currentPreset.title}</div>`;
-      html += `<div style="margin-bottom: 12px; color: rgba(255,213,128,0.7); font-size: 11px;">Kỹ năng điều phối: <span style="color:#FFF0AA;">${currentPreset.skill}</span></div>`;
-      currentPreset.steps.forEach((s, i) => {
-        html += `<div class="item"><span class="tag">BƯỚC ${i+1}</span> <span>${s}</span></div>`;
-      });
-      html += `<div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255,159,0,0.25); color: #FFF0AA; font-weight: 500;">✦ TỔNG KẾT: ${currentPreset.result}</div>`;
-      content.innerHTML = html;
-      modal.classList.add('show');
-    }
-
-    function closeResultModal() {
-      document.getElementById('result-modal').classList.remove('show');
-    }
-
-    // =========================================================================
-    // 7. CAMERA INTERACTION
+    // 7. CAMERA ORBIT & USER INPUT HANDLERS
     // =========================================================================
     let camYaw = 0.0, camPitch = 0.0, targetYaw = 0.0, targetPitch = 0.0;
     let camDist = 1.88, targetDist = 1.88;
@@ -1836,9 +1885,8 @@
     let userResonanceTarget = 0.0, currentResonance = 0.0;
 
     canvas.addEventListener('mousedown', (e) => {
-      initAudio();
       isDragging = true;
-      userResonanceTarget = 1.0;
+      userResonanceTarget = 0.85;
       lastX = e.clientX;
       lastY = e.clientY;
     });
@@ -1848,7 +1896,7 @@
       const ny = (e.clientY / window.innerHeight) * 2.0 - 1.0;
       const distCenter = Math.hypot(nx, ny);
       if (!isDragging) {
-        userResonanceTarget = Math.max(0.0, (0.60 - distCenter) * 0.75);
+        userResonanceTarget = Math.max(0.0, (0.55 - distCenter) * 0.65);
       }
       if (!isDragging) return;
       targetYaw   += (e.clientX - lastX) * 0.0055;
@@ -1869,29 +1917,49 @@
       targetDist = Math.max(0.88, Math.min(3.4, targetDist));
     }, { passive: false });
 
-    canvas.addEventListener('touchstart', (e) => {
-      initAudio();
+    const promptInput = document.getElementById('prompt-input');
+    const promptSend  = document.getElementById('prompt-send');
+
+    function handleUserSubmit() {
+      const val = promptInput.value.trim();
+      if (!val) return;
       userResonanceTarget = 1.0;
-      if (e.touches.length === 1) {
-        isDragging = true;
-        lastX = e.touches[0].clientX;
-        lastY = e.touches[0].clientY;
-      }
-    }, { passive: true });
+      setTimeout(() => { userResonanceTarget = 0.25; }, 1200);
+      const scenario = inferScenarioFromPrompt(val);
+      executeNeuralRequest(scenario);
+    }
 
-    window.addEventListener('touchmove', (e) => {
-      if (!isDragging || e.touches.length !== 1) return;
-      targetYaw   += (e.touches[0].clientX - lastX) * 0.0055;
-      targetPitch += (e.touches[0].clientY - lastY) * 0.0055;
-      targetPitch = Math.max(-1.35, Math.min(1.35, targetPitch));
-      lastX = e.touches[0].clientX;
-      lastY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchend', () => {
-      isDragging = false;
-      userResonanceTarget = 0.0;
+    promptSend.addEventListener('click', handleUserSubmit);
+    promptInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleUserSubmit();
     });
+
+    document.querySelectorAll('.thought-link').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-idx'), 10);
+        const sc = BUILTIN_SCENARIOS[idx];
+        promptInput.value = sc.prompt;
+        userResonanceTarget = 1.0;
+        setTimeout(() => { userResonanceTarget = 0.25; }, 1200);
+        executeNeuralRequest(sc);
+      });
+    });
+
+    // Expose helper so automated verification or console can trigger a thought sequence
+    window.triggerJarvisThought = (idxOrText) => {
+      if (typeof idxOrText === 'number' && BUILTIN_SCENARIOS[idxOrText]) {
+        promptInput.value = BUILTIN_SCENARIOS[idxOrText].prompt;
+        executeNeuralRequest(BUILTIN_SCENARIOS[idxOrText]);
+      } else if (typeof idxOrText === 'string') {
+        promptInput.value = idxOrText;
+        executeNeuralRequest(inferScenarioFromPrompt(idxOrText));
+      }
+    };
+
+    // Auto-boot with a 2-step sequential thought chain so the user immediately sees
+    // how a new neural branch sprouts (MEM#01) and how the next branch (MEM#02) links back to it!
+    setTimeout(() => window.triggerJarvisThought(0), 250);
+    setTimeout(() => window.triggerJarvisThought(1), 1450);
 
     function perspective(fov, aspect, near, far) {
       const f = 1.0 / Math.tan(fov * 0.5);
@@ -1907,8 +1975,20 @@
     function computeViewMatrix(yaw, pitch, dist) {
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
-      const mYaw = [cy, 0, sy, 0, 0, 1, 0, 0, -sy, 0, cy, 0, 0, 0, 0, 1];
-      const mPitch = [1, 0, 0, 0, 0, cp, sp, 0, 0, -sp, cp, 0, 0, 0, 0, 1];
+
+      const mYaw = [
+         cy, 0, sy, 0,
+          0, 1,  0, 0,
+        -sy, 0, cy, 0,
+          0, 0,  0, 1
+      ];
+      const mPitch = [
+        1,   0,  0, 0,
+        0,  cp, sp, 0,
+        0, -sp, cp, 0,
+        0,   0,  0, 1
+      ];
+
       const out = new Float32Array(16);
       for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
@@ -1927,11 +2007,67 @@
       const cx = Math.cos(rx), sx = Math.sin(rx);
       const cy = Math.cos(ry), sy = Math.sin(ry);
       const cz = Math.cos(rz), sz = Math.sin(rz);
+
       return [
-        cy * cz, sx * sy * cz + cx * sz, -cx * sy * cz + sx * sz,
-        -cy * sz, -sx * sy * sz + cx * cz, cx * sy * sz + sx * cz,
-        sy, -sx * cy, cx * cy
+        cy * cz,
+        sx * sy * cz + cx * sz,
+        -cx * sy * cz + sx * sz,
+
+        -cy * sz,
+        -sx * sy * sz + cx * cz,
+        cx * sy * sz + sx * cz,
+
+        sy,
+        -sx * cy,
+        cx * cy
       ];
+    }
+
+    function mulMat3Vec3(m, v) {
+      return [
+        m[0] * v[0] + m[3] * v[1] + m[6] * v[2],
+        m[1] * v[0] + m[4] * v[1] + m[7] * v[2],
+        m[2] * v[0] + m[5] * v[1] + m[8] * v[2]
+      ];
+    }
+
+    function project3DToScreen(pos, lid, layerMats, viewMat, projMat) {
+      let p;
+      const coreM = layerMats.subarray(0, 9);
+      if (lid < 10) {
+        const m = layerMats.subarray(lid * 9, (lid + 1) * 9);
+        p = mulMat3Vec3(m, pos);
+      } else {
+        const sId = lid - 10;
+        const m = layerMats.subarray(sId * 9, (sId + 1) * 9);
+        const pCore = mulMat3Vec3(coreM, pos);
+        const pShell = mulMat3Vec3(m, pos);
+        const r = Math.hypot(pos[0], pos[1], pos[2]);
+        const u = Math.max(0.0, Math.min(1.0, (r - 0.10) / 0.45));
+        const blend = u * u * (3.0 - 2.0 * u);
+        p = [
+          pCore[0] + (pShell[0] - pCore[0]) * blend,
+          pCore[1] + (pShell[1] - pCore[1]) * blend,
+          pCore[2] + (pShell[2] - pCore[2]) * blend
+        ];
+      }
+
+      const vx = viewMat[0] * p[0] + viewMat[4] * p[1] + viewMat[8]  * p[2] + viewMat[12];
+      const vy = viewMat[1] * p[0] + viewMat[5] * p[1] + viewMat[9]  * p[2] + viewMat[13];
+      const vz = viewMat[2] * p[0] + viewMat[6] * p[1] + viewMat[10] * p[2] + viewMat[14];
+
+      const cx = projMat[0] * vx;
+      const cy = projMat[5] * vy;
+      const cw = -vz;
+      if (cw <= 0.1) return null;
+
+      const ndcX = cx / cw;
+      const ndcY = cy / cw;
+      return {
+        x: (ndcX * 0.5 + 0.5) * window.innerWidth,
+        y: (1.0 - (ndcY * 0.5 + 0.5)) * window.innerHeight,
+        z: vz
+      };
     }
 
     function drawBlurPass(srcTex, dstFBO, dirX, dirY) {
@@ -1953,108 +2089,17 @@
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
-    // =========================================================================
-    // 8. RENDER LOOP
-    // =========================================================================
-    let lastTime = performance.now();
-    let virtualTime = 0.0;
-    let smoothExcitation = 0.0;
-    let smoothSpeedMul = 1.0;
-
-    function render(now) {
-      const dt = Math.min(0.05, (now - lastTime) * 0.001);
-      lastTime = now;
-
-      if (!isPaused) {
-        virtualTime += dt;
-      }
-      const t = virtualTime;
-
-      camYaw   += (targetYaw - camYaw) * 0.08;
-      camPitch += (targetPitch - camPitch) * 0.08;
-      camDist  += (targetDist - camDist) * 0.08;
-
-      smoothExcitation += (activeExcitation - smoothExcitation) * 0.08;
-      smoothSpeedMul   += (activeSpeedMul - smoothSpeedMul) * 0.08;
-
-      const autoCognitivePulse = Math.pow(0.5 + 0.5 * Math.sin(t * 0.65) * Math.cos(t * 0.42), 4.0) * 0.38;
-      const targetRes = Math.min(1.0, userResonanceTarget + autoCognitivePulse);
-      currentResonance += (targetRes - currentResonance) * 0.06;
-
-      const breathWave = 0.5 + 0.5 * (
-        0.55 * Math.sin(t * (1.65 + smoothExcitation * 1.5)) +
-        0.30 * Math.sin(t * (2.85 + smoothExcitation * 2.2) + 0.9) +
-        0.15 * Math.cos(t * 4.10)
-      );
-      const pulse = (0.74 + 0.26 * breathWave) * (1.0 + smoothExcitation * 0.15);
-
-      const rotSpeedScale = 1.0 + smoothExcitation * 1.8;
-      const layerMats = new Float32Array(54);
-      layerMats.set(eulerToMat3(Math.sin(t * 0.28) * 0.06, Math.cos(t * 0.22) * 0.06, Math.sin(t * 0.16) * 0.04), 0);
-      layerMats.set(eulerToMat3(Math.sin(t * 0.19) * 0.14, t * 0.12 * rotSpeedScale, Math.cos(t * 0.15) * 0.10), 9);
-      layerMats.set(eulerToMat3(-t * 0.08 * rotSpeedScale, Math.sin(t * 0.14) * 0.18, t * 0.06 * rotSpeedScale), 18);
-      layerMats.set(eulerToMat3(Math.cos(t * 0.13) * 0.14, -t * 0.09 * rotSpeedScale, -t * 0.05 * rotSpeedScale), 27);
-      layerMats.set(eulerToMat3(Math.sin(t * 0.11) * 0.12, t * 0.07 * rotSpeedScale, Math.cos(t * 0.10) * 0.10), 36);
-      layerMats.set(eulerToMat3(Math.cos(t * 0.09) * 0.10, -t * 0.06 * rotSpeedScale, Math.sin(t * 0.08) * 0.09), 45);
-
-      if (!isPaused) {
-        updateFlowParticles(dt, (1.0 + currentResonance * 1.15) * smoothSpeedMul, activeForceDir);
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufNodes);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, dynamicNodeArray);
-      }
-
-      const projMat = perspective(Math.PI * 0.34, width / height, 0.1, 15.0);
-      const viewMat = computeViewMatrix(camYaw, camPitch, camDist);
-
-      // Pass 1: Additive Scene
-      gl.bindFramebuffer(gl.FRAMEBUFFER, fboScene.fb);
-      gl.viewport(0, 0, width, height);
-      gl.clearColor(0.0, 0.0, 0.0, 0.0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.ONE, gl.ONE);
-
-      // 1A. Web Lines
-      gl.useProgram(progWeb);
-      gl.bindBuffer(gl.ARRAY_BUFFER, bufWeb);
-      const strideW = 6 * 4;
-      const locWPos = gl.getAttribLocation(progWeb, 'a_pos');
-      const locWAlp = gl.getAttribLocation(progWeb, 'a_alpha');
-      const locWLay = gl.getAttribLocation(progWeb, 'a_layer');
-      const locWHea = gl.getAttribLocation(progWeb, 'a_heat');
-
-      gl.enableVertexAttribArray(locWPos);
-      gl.vertexAttribPointer(locWPos, 3, gl.FLOAT, false, strideW, 0);
-      gl.enableVertexAttribArray(locWAlp);
-      gl.vertexAttribPointer(locWAlp, 1, gl.FLOAT, false, strideW, 12);
-      gl.enableVertexAttribArray(locWLay);
-      gl.vertexAttribPointer(locWLay, 1, gl.FLOAT, false, strideW, 16);
-      gl.enableVertexAttribArray(locWHea);
-      gl.vertexAttribPointer(locWHea, 1, gl.FLOAT, false, strideW, 20);
-
-      gl.uniformMatrix4fv(gl.getUniformLocation(progWeb, 'u_proj'), false, projMat);
-      gl.uniformMatrix4fv(gl.getUniformLocation(progWeb, 'u_view'), false, viewMat);
-      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_pulse'), pulse);
-      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_time'), t);
-      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_resonance'), currentResonance);
-      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_excitation'), smoothExcitation);
-      gl.uniformMatrix3fv(gl.getUniformLocation(progWeb, 'u_layerRot[0]'), false, layerMats);
-
-      gl.drawArrays(gl.LINES, 0, numWebVerts);
-
-      // 1B. Ribbons
-      gl.useProgram(progRibbon);
-      gl.bindBuffer(gl.ARRAY_BUFFER, bufRibbon);
-      const strideR = 12 * 4;
-      const locRCur = gl.getAttribLocation(progRibbon, 'a_curr');
-      const locRNex = gl.getAttribLocation(progRibbon, 'a_next');
-      const locRSid = gl.getAttribLocation(progRibbon, 'a_side');
-      const locRWid = gl.getAttribLocation(progRibbon, 'a_width');
-      const locRAlp = gl.getAttribLocation(progRibbon, 'a_alpha');
-      const locRLay = gl.getAttribLocation(progRibbon, 'a_layer');
-      const locRT   = gl.getAttribLocation(progRibbon, 'a_t');
-      const locRHea = gl.getAttribLocation(progRibbon, 'a_heat');
+    function bindRibbonAttribs(prog) {
+      const strideR = 13 * 4;
+      const locRCur = gl.getAttribLocation(prog, 'a_curr');
+      const locRNex = gl.getAttribLocation(prog, 'a_next');
+      const locRSid = gl.getAttribLocation(prog, 'a_side');
+      const locRWid = gl.getAttribLocation(prog, 'a_width');
+      const locRAlp = gl.getAttribLocation(prog, 'a_alpha');
+      const locRLay = gl.getAttribLocation(prog, 'a_layer');
+      const locRT   = gl.getAttribLocation(prog, 'a_t');
+      const locRHea = gl.getAttribLocation(prog, 'a_heat');
+      const locRDom = gl.getAttribLocation(prog, 'a_domain');
 
       gl.enableVertexAttribArray(locRCur);
       gl.vertexAttribPointer(locRCur, 3, gl.FLOAT, false, strideR, 0);
@@ -2072,7 +2117,132 @@
       gl.vertexAttribPointer(locRT, 1, gl.FLOAT, false, strideR, 40);
       gl.enableVertexAttribArray(locRHea);
       gl.vertexAttribPointer(locRHea, 1, gl.FLOAT, false, strideR, 44);
+      gl.enableVertexAttribArray(locRDom);
+      gl.vertexAttribPointer(locRDom, 1, gl.FLOAT, false, strideR, 48);
+    }
 
+    // =========================================================================
+    // 8. MAIN RENDER LOOP
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function render(now) {
+      const dt = Math.min(0.05, (now - lastTime) * 0.001);
+      lastTime = now;
+      const t = now * 0.001;
+
+      camYaw   += (targetYaw - camYaw) * 0.07;
+      camPitch += (targetPitch - camPitch) * 0.07;
+      camDist  += (targetDist - camDist) * 0.08;
+
+      // Smoothly interpolate per-domain Hebbian weights
+      for (let d = 0; d < 7; d++) {
+        domainWeights[d] += (targetDomainWeights[d] - domainWeights[d]) * 0.06;
+      }
+
+      // Advance real-time sprouting of newly formed Memory Branches & Synaptic Bridges
+      let needsDynUpdate = false;
+      activeGrowBranches.forEach((br) => {
+        if (br.growth < 1.0) {
+          br.growth = Math.min(1.0, br.growth + dt * 0.95);
+          needsDynUpdate = true;
+        }
+      });
+      synapticBridges.forEach((sb) => {
+        if (sb.growing && sb.growth < 1.0) {
+          sb.growth = Math.min(1.0, sb.growth + dt * 1.15);
+          needsDynUpdate = true;
+        }
+      });
+      if (needsDynUpdate || activeGrowBranches.length > 0) {
+        rebuildDynamicNeurogenesisGeometry();
+      }
+
+      const autoCognitivePulse = Math.pow(0.5 + 0.5 * Math.sin(t * 0.65) * Math.cos(t * 0.42), 4.0) * 0.35;
+      const targetRes = Math.min(1.0, userResonanceTarget + autoCognitivePulse);
+      currentResonance += (targetRes - currentResonance) * 0.06;
+
+      const breathWave = 0.5 + 0.5 * (
+        0.55 * Math.sin(t * 1.65) +
+        0.30 * Math.sin(t * 2.85 + 0.9) +
+        0.15 * Math.cos(t * 4.10)
+      );
+      const pulse = 0.74 + 0.26 * breathWave;
+
+      const layerMats = new Float32Array(54);
+      layerMats.set(eulerToMat3(Math.sin(t * 0.28) * 0.06, Math.cos(t * 0.22) * 0.06, Math.sin(t * 0.16) * 0.04), 0);
+      layerMats.set(eulerToMat3(Math.sin(t * 0.19) * 0.14, t * 0.12, Math.cos(t * 0.15) * 0.10), 9);
+      layerMats.set(eulerToMat3(-t * 0.08, Math.sin(t * 0.14) * 0.18, t * 0.06), 18);
+      layerMats.set(eulerToMat3(Math.cos(t * 0.13) * 0.14, -t * 0.09, -t * 0.05), 27);
+      layerMats.set(eulerToMat3(Math.sin(t * 0.11) * 0.12, t * 0.07, Math.cos(t * 0.10) * 0.10), 36);
+      layerMats.set(eulerToMat3(Math.cos(t * 0.09) * 0.10, -t * 0.06, Math.sin(t * 0.08) * 0.09), 45);
+
+      const activeNodeCount = updateFlowParticles(dt, 1.0 + currentResonance * 1.15);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufNodes);
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, dynamicNodeArray);
+
+      const projMat = perspective(Math.PI * 0.34, width / height, 0.1, 15.0);
+      const viewMat = computeViewMatrix(camYaw, camPitch, camDist);
+
+      // Update 3D projected coordinates of spatial node callouts
+      for (let i = 0; i < activeCallouts.length; i++) {
+        const item = activeCallouts[i];
+        const scr = project3DToScreen(item.pos, item.layer, layerMats, viewMat, projMat);
+        if (!scr) {
+          item.el.style.opacity = '0';
+          continue;
+        }
+        const depthAlpha = Math.max(0.18, Math.min(1.0, (scr.z + 2.45) / 1.15));
+        const finalOpacity = depthAlpha * (item.baseOpacity !== undefined ? item.baseOpacity : 1.0);
+        item.el.style.left = `${scr.x}px`;
+        item.el.style.top  = `${scr.y}px`;
+        item.el.style.opacity = finalOpacity.toFixed(2);
+      }
+
+      // ---------------------------------------------------------------------
+      // PASS 1: Render Pure Additive Volumetric Scene to fboScene
+      // ---------------------------------------------------------------------
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fboScene.fb);
+      gl.viewport(0, 0, width, height);
+      gl.clearColor(0.0, 0.0, 0.0, 0.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+
+      // 1A. Sub-Network Spider-Web Filaments
+      gl.useProgram(progWeb);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufWeb);
+      const strideW = 7 * 4;
+      const locWPos = gl.getAttribLocation(progWeb, 'a_pos');
+      const locWAlp = gl.getAttribLocation(progWeb, 'a_alpha');
+      const locWLay = gl.getAttribLocation(progWeb, 'a_layer');
+      const locWHea = gl.getAttribLocation(progWeb, 'a_heat');
+      const locWDom = gl.getAttribLocation(progWeb, 'a_domain');
+
+      gl.enableVertexAttribArray(locWPos);
+      gl.vertexAttribPointer(locWPos, 3, gl.FLOAT, false, strideW, 0);
+      gl.enableVertexAttribArray(locWAlp);
+      gl.vertexAttribPointer(locWAlp, 1, gl.FLOAT, false, strideW, 12);
+      gl.enableVertexAttribArray(locWLay);
+      gl.vertexAttribPointer(locWLay, 1, gl.FLOAT, false, strideW, 16);
+      gl.enableVertexAttribArray(locWHea);
+      gl.vertexAttribPointer(locWHea, 1, gl.FLOAT, false, strideW, 20);
+      gl.enableVertexAttribArray(locWDom);
+      gl.vertexAttribPointer(locWDom, 1, gl.FLOAT, false, strideW, 24);
+
+      gl.uniformMatrix4fv(gl.getUniformLocation(progWeb, 'u_proj'), false, projMat);
+      gl.uniformMatrix4fv(gl.getUniformLocation(progWeb, 'u_view'), false, viewMat);
+      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_pulse'), pulse);
+      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_time'), t);
+      gl.uniform1f(gl.getUniformLocation(progWeb, 'u_resonance'), currentResonance);
+      gl.uniformMatrix3fv(gl.getUniformLocation(progWeb, 'u_layerRot[0]'), false, layerMats);
+      gl.uniform1fv(gl.getUniformLocation(progWeb, 'u_domW[0]'), domainWeights);
+
+      gl.drawArrays(gl.LINES, 0, numWebVerts);
+
+      // 1B. Primary Neural Pathways & Dynamic Neurogenesis Branches
+      gl.useProgram(progRibbon);
       gl.uniformMatrix4fv(gl.getUniformLocation(progRibbon, 'u_proj'), false, projMat);
       gl.uniformMatrix4fv(gl.getUniformLocation(progRibbon, 'u_view'), false, viewMat);
       gl.uniform2f(gl.getUniformLocation(progRibbon, 'u_resolution'), width, height);
@@ -2080,21 +2250,29 @@
       gl.uniform1f(gl.getUniformLocation(progRibbon, 'u_pulse'), pulse);
       gl.uniform1f(gl.getUniformLocation(progRibbon, 'u_time'), t);
       gl.uniform1f(gl.getUniformLocation(progRibbon, 'u_resonance'), currentResonance);
-      gl.uniform1f(gl.getUniformLocation(progRibbon, 'u_excitation'), smoothExcitation);
-      gl.uniform1f(gl.getUniformLocation(progRibbon, 'u_streamSpeed'), smoothSpeedMul);
       gl.uniformMatrix3fv(gl.getUniformLocation(progRibbon, 'u_layerRot[0]'), false, layerMats);
+      gl.uniform1fv(gl.getUniformLocation(progRibbon, 'u_domW[0]'), domainWeights);
 
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufRibbon);
+      bindRibbonAttribs(progRibbon);
       gl.drawArrays(gl.TRIANGLES, 0, numRibbonVerts);
 
-      // 1C. Nodes
+      if (numDynRibbonVerts > 0) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufDynRibbon);
+        bindRibbonAttribs(progRibbon);
+        gl.drawArrays(gl.TRIANGLES, 0, numDynRibbonVerts);
+      }
+
+      // 1C. Volumetric Core Point-Cloud, Synaptic Nodes, Bokeh & Photon Streams
       gl.useProgram(progNodes);
       gl.bindBuffer(gl.ARRAY_BUFFER, bufNodes);
-      const strideN = 7 * 4;
+      const strideN = 8 * 4;
       const locNPos = gl.getAttribLocation(progNodes, 'a_pos');
       const locNSiz = gl.getAttribLocation(progNodes, 'a_size');
       const locNAlp = gl.getAttribLocation(progNodes, 'a_alpha');
       const locNLay = gl.getAttribLocation(progNodes, 'a_layer');
       const locNTyp = gl.getAttribLocation(progNodes, 'a_type');
+      const locNDom = gl.getAttribLocation(progNodes, 'a_domain');
 
       gl.enableVertexAttribArray(locNPos);
       gl.vertexAttribPointer(locNPos, 3, gl.FLOAT, false, strideN, 0);
@@ -2106,6 +2284,8 @@
       gl.vertexAttribPointer(locNLay, 1, gl.FLOAT, false, strideN, 20);
       gl.enableVertexAttribArray(locNTyp);
       gl.vertexAttribPointer(locNTyp, 1, gl.FLOAT, false, strideN, 24);
+      gl.enableVertexAttribArray(locNDom);
+      gl.vertexAttribPointer(locNDom, 1, gl.FLOAT, false, strideN, 28);
 
       gl.uniformMatrix4fv(gl.getUniformLocation(progNodes, 'u_proj'), false, projMat);
       gl.uniformMatrix4fv(gl.getUniformLocation(progNodes, 'u_view'), false, viewMat);
@@ -2113,20 +2293,25 @@
       gl.uniform1f(gl.getUniformLocation(progNodes, 'u_pulse'), pulse);
       gl.uniform1f(gl.getUniformLocation(progNodes, 'u_time'), t);
       gl.uniform1f(gl.getUniformLocation(progNodes, 'u_resonance'), currentResonance);
-      gl.uniform1f(gl.getUniformLocation(progNodes, 'u_excitation'), smoothExcitation);
       gl.uniformMatrix3fv(gl.getUniformLocation(progNodes, 'u_layerRot[0]'), false, layerMats);
+      gl.uniform1fv(gl.getUniformLocation(progNodes, 'u_domW[0]'), domainWeights);
 
-      gl.drawArrays(gl.POINTS, 0, numTotalNodes);
+      gl.drawArrays(gl.POINTS, 0, activeNodeCount);
 
-      // Pass 2: Bloom
+      // ---------------------------------------------------------------------
+      // PASS 2: Multi-Scale Gaussian Bloom
+      // ---------------------------------------------------------------------
       drawBlurPass(fboScene.tex, fboPing1, 1.35 / fboPing1.w, 0.0);
       drawBlurPass(fboPing1.tex, fboPong1, 0.0, 1.35 / fboPong1.h);
+
       drawBlurPass(fboPong1.tex, fboPing2, 2.2 / fboPing2.w, 0.0);
       drawBlurPass(fboPing2.tex, fboPong2, 0.0, 2.2 / fboPong2.h);
       drawBlurPass(fboPong2.tex, fboPing2, 3.2 / fboPing2.w, 0.0);
       drawBlurPass(fboPing2.tex, fboPong2, 0.0, 3.2 / fboPong2.h);
 
-      // Pass 3: Composite
+      // ---------------------------------------------------------------------
+      // PASS 3: Final Lens Composite
+      // ---------------------------------------------------------------------
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.viewport(0, 0, width, height);
       gl.disable(gl.BLEND);
@@ -2152,14 +2337,12 @@
       gl.uniform2f(gl.getUniformLocation(progComposite, 'u_texel'), 1.0 / width, 1.0 / height);
       gl.uniform1f(gl.getUniformLocation(progComposite, 'u_pulse'), pulse);
       gl.uniform1f(gl.getUniformLocation(progComposite, 'u_resonance'), currentResonance);
-      gl.uniform1f(gl.getUniformLocation(progComposite, 'u_excitation'), smoothExcitation);
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
       requestAnimationFrame(render);
     }
 
-    addLogEntry('J.A.R.V.I.S. KHỞI TẠO MA TRẬN Ý THỨC THÀNH CÔNG');
     requestAnimationFrame(render);
   </script>
 </body>
