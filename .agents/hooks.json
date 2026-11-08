@@ -1,0 +1,36 @@
+{
+  "jarvis-neural-telemetry": {
+    "enabled": true,
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\duyet.nguyenhuu\\.gemini\\antigravity\\scratch\\jarvis-neural-sphere\\.agents\\jarvis-hook.ps1\" -Event PreInvocation",
+        "timeout": 5
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\duyet.nguyenhuu\\.gemini\\antigravity\\scratch\\jarvis-neural-sphere\\.agents\\jarvis-hook.ps1\" -Event PreToolUse",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\duyet.nguyenhuu\\.gemini\\antigravity\\scratch\\jarvis-neural-sphere\\.agents\\jarvis-hook.ps1\" -Event PostToolUse",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
