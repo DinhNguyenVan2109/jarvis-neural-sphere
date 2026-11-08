@@ -37,14 +37,19 @@ Thay vì cứ mỗi tin nhắn mới lại mọc thêm nhánh vô hạn làm bi�
 ## 🚀 Hướng dẫn khởi chạy (Tại cơ quan hoặc Ở nhà)
 
 ### Bước 1: Bật cầu nối thời gian thực với Antigravity
-Mở PowerShell tại thư mục dự án và chạy:
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\jarvis-antigravity-bridge.ps1 -Port 18765
-```
+* **Trên Windows (PowerShell):**
+  ```powershell
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\jarvis-antigravity-bridge.ps1 -Port 18765
+  ```
+* **Trên Linux / macOS / Đa nền tảng (Python 3):**
+  ```bash
+  python3 jarvis_bridge.py 18765
+  ```
 *(Script sẽ tự động dò tìm phiên Antigravity đang chạy trên máy của bạn, hoặc dùng `conversation_history/transcript_sanitized.jsonl` nếu chạy độc lập).*
 
 ### Bước 2: Mở giao diện 3D J.A.R.V.I.S.
-Mở trực tiếp file `index.html` (hoặc `jarvis-3d-neural-sphere.html`) trên trình duyệt (Chrome / Edge / Firefox). Khối cầu sẽ tự động kết nối tới `http://127.0.0.1:18765/api/brain` và hiển thị trạng thái `LIVE SYNC · SESSION <ID>`.
+* Truy cập `http://localhost:18765` trên trình duyệt (hoặc mở trực tiếp file `index.html` / `jarvis-3d-neural-sphere.html`).
+* Khối cầu sẽ tự động kết nối tới `http://127.0.0.1:18765/api/brain` và hiển thị trạng thái `LIVE SYNC · SESSION <ID>`.
 
 ---
 

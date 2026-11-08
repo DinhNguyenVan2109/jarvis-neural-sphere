@@ -17,3 +17,5 @@ desktop.ini
 scratch/
 tmp/
 temp/
+__pycache__/
+*.pyc
