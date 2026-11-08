@@ -1,33 +1,45 @@
 # =============================================================================
 # J.A.R.V.I.S. <-> ANTIGRAVITY LIVE NEURAL TELEMETRY & PROMPT BRIDGE DAEMON
-# 1. GET  /api/brain  -> Streams real-time transcript.jsonl, thinking, tool calls,
-#                        activated skills, bounded 8-slot Hippocampus memory ring,
-#                        and log-saturated Hebbian synaptic weights.
-# 2. POST /api/prompt -> Queues a user prompt from J.A.R.V.I.S. directly to wake
-#                        up the live Antigravity agent session!
+# Works seamlessly across machines ($env:USERPROFILE & $PSScriptRoot) and falls
+# back to conversation_history/transcript_sanitized.jsonl if needed.
 # =============================================================================
 param(
   [int]$Port = 18765
 )
 
 $ErrorActionPreference = "SilentlyContinue"
-$brainRoot = "C:\Users\duyet.nguyenhuu\.gemini\antigravity\brain"
-$repoRoot  = "C:\Users\duyet.nguyenhuu\.gemini\antigravity\scratch\jarvis-neural-sphere"
-$hookStateFile    = Join-Path $repoRoot "live_hook_state.json"
+$brainRoot = Join-Path $env:USERPROFILE ".gemini\antigravity\brain"
+$repoRoot  = $PSScriptRoot
+$hookStateFile     = Join-Path $repoRoot "live_hook_state.json"
 $pendingPromptFile = Join-Path $repoRoot "pending_prompt.json"
+$fallbackTranscript = Join-Path $repoRoot "conversation_history\transcript_sanitized.jsonl"
 
 function Get-AntigravityBrainState {
-  $latestTranscript = Get-ChildItem -Path $brainRoot -Directory | ForEach-Object {
-    $p = Join-Path $_.FullName ".system_generated\logs\transcript.jsonl"
-    if (Test-Path $p) { Get-Item $p }
-  } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  $latestTranscript = $null
+  if (Test-Path $brainRoot) {
+    $latestTranscript = Get-ChildItem -Path $brainRoot -Directory | ForEach-Object {
+      $p = Join-Path $_.FullName ".system_generated\logs\transcript.jsonl"
+      if (Test-Path $p) { Get-Item $p }
+    } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  }
 
-  if (-not $latestTranscript) {
+  $transcriptFilePath = $null
+  $convId = "892a432f-aae3-45a6-b0ef-94186749a067"
+  $lastModStr = (Get-Date).ToString("o")
+
+  if ($latestTranscript) {
+    $transcriptFilePath = $latestTranscript.FullName
+    $convId = $latestTranscript.Directory.Parent.Parent.Name
+    $lastModStr = $latestTranscript.LastWriteTime.ToString("o")
+  } elseif (Test-Path $fallbackTranscript) {
+    $transcriptFilePath = $fallbackTranscript
+    $item = Get-Item $fallbackTranscript
+    $lastModStr = $item.LastWriteTime.ToString("o")
+  } else {
     return @{ ok = $false; error = "No transcript found" }
   }
 
-  $convId = $latestTranscript.Directory.Parent.Parent.Name
-  $allLines = [System.IO.File]::ReadAllLines($latestTranscript.FullName, [System.Text.Encoding]::UTF8)
+  $allLines = [System.IO.File]::ReadAllLines($transcriptFilePath, [System.Text.Encoding]::UTF8)
   $totalSteps = $allLines.Count
 
   $toolCounts = @{
@@ -136,26 +148,16 @@ function Get-AntigravityBrainState {
     }
   }
 
-  # Bounded 8-slot Hippocampus Working Memory Ring (Homeostatic: old slots consolidate, never grows unbounded!)
   $boundedMemoryRing = @()
   $startIdx = [Math]::Max(0, $recentTurns.Count - 8)
   for ($m = $startIdx; $m -lt $recentTurns.Count; $m++) {
     $boundedMemoryRing += $recentTurns[$m]
   }
 
-  # Determine which Cortical Regions are firing in the latest turn
-  # 0: CORTEX 0 // LANGUAGE & REASONING (PLANNER_RESPONSE / LLM Core)
-  # 1: CORTEX 1 // PERCEPTION & READ (read_file)
-  # 2: CORTEX 2 // CODE & ARTIFACT SYNTHESIS (write_file, edit_file)
-  # 3: CORTEX 3 // MOTOR & SHELL EXECUTION (run_command)
-  # 4: CORTEX 4 // PROCEDURAL SKILLS (SKILL.md activations)
-  # 5: CORTEX 5 // HIPPOCAMPUS MEMORY RING (Episodic context consolidation)
-  # 6: CORTEX 6 // SWARM & EXTERNAL SEARCH (search_web, invoke_subagent, mcp)
   $activeSet = New-Object System.Collections.Generic.HashSet[int]
   [void]$activeSet.Add(0)
   [void]$activeSet.Add(5)
 
-  # Find the index of the latest USER_INPUT so we only highlight tools used in the CURRENT turn!
   $lastUserStepArrIdx = $totalSteps - 1
   for ($u = $totalSteps - 1; $u -ge 0; $u--) {
     if ($allLines[$u] -match '"type"\s*:\s*"USER_INPUT"') {
@@ -165,7 +167,8 @@ function Get-AntigravityBrainState {
   }
 
   $currentTurnToolCalls = 0
-  for ($j = $lastUserStepArrIdx; $j -lt $totalSteps; $j++) {
+  $tailStart = [Math]::Max($lastUserStepArrIdx, $totalSteps - 3)
+  for ($j = $tailStart; $j -lt $totalSteps; $j++) {
     $l = $allLines[$j]
     if ([string]::IsNullOrWhiteSpace($l)) { continue }
     try {
@@ -196,15 +199,14 @@ function Get-AntigravityBrainState {
   $skillTotal = 0
   foreach ($v in $activatedSkills.Values) { $skillTotal += $v }
 
-  # Logarithmic Hebbian Synaptic Plasticity Weights (Homeostatic bound [0.35 .. 1.65])
   $hebbianWeights = @(
-    [Math]::Round([Math]::Min(1.65, 0.55 + [Math]::Log10(1 + $totalSteps) * 0.35), 3),
-    [Math]::Round([Math]::Min(1.65, 0.35 + [Math]::Log10(1 + $toolCounts["read_file"]) * 0.55), 3),
-    [Math]::Round([Math]::Min(1.65, 0.35 + [Math]::Log10(1 + $toolCounts["edit_file"] + $toolCounts["write_file"]) * 0.60), 3),
-    [Math]::Round([Math]::Min(1.65, 0.35 + [Math]::Log10(1 + $toolCounts["run_command"]) * 0.55), 3),
-    [Math]::Round([Math]::Min(1.65, 0.35 + [Math]::Log10(1 + $skillTotal) * 0.65), 3),
-    [Math]::Round([Math]::Min(1.65, 0.45 + [Math]::Log10(1 + $turnCounter) * 0.55), 3),
-    [Math]::Round([Math]::Min(1.65, 0.35 + [Math]::Log10(1 + $toolCounts["search_web"] + $toolCounts["invoke_subagent"] + $toolCounts["mcp"]) * 0.65), 3)
+    [Math]::Round([Math]::Min(1.55, 0.55 + [Math]::Log10(1 + $totalSteps) * 0.32), 3),
+    [Math]::Round([Math]::Min(1.55, 0.35 + [Math]::Log10(1 + $toolCounts["read_file"]) * 0.50), 3),
+    [Math]::Round([Math]::Min(1.55, 0.35 + [Math]::Log10(1 + $toolCounts["edit_file"] + $toolCounts["write_file"]) * 0.55), 3),
+    [Math]::Round([Math]::Min(1.55, 0.35 + [Math]::Log10(1 + $toolCounts["run_command"]) * 0.50), 3),
+    [Math]::Round([Math]::Min(1.55, 0.35 + [Math]::Log10(1 + $skillTotal) * 0.60), 3),
+    [Math]::Round([Math]::Min(1.55, 0.45 + [Math]::Log10(1 + $turnCounter) * 0.50), 3),
+    [Math]::Round([Math]::Min(1.55, 0.35 + [Math]::Log10(1 + $toolCounts["search_web"] + $toolCounts["invoke_subagent"] + $toolCounts["mcp"]) * 0.60), 3)
   )
 
   $modelName = "Antigravity Active LLM"
@@ -242,7 +244,7 @@ function Get-AntigravityBrainState {
       output = $lastOutputTokens
     }
     pendingPrompt = $pendingText
-    lastModified = $latestTranscript.LastWriteTime.ToString("o")
+    lastModified = $lastModStr
     latestStep = @{
       index = $latestStepIndex
       type = $latestStepType

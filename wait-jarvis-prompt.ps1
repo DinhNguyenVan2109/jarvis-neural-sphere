@@ -1,6 +1,6 @@
 # Waits for a user prompt submitted from the 3D J.A.R.V.I.S. UI and exits
 # so Antigravity automatically wakes up and executes it with the active LLM!
-$pendingPromptFile = "C:\Users\duyet.nguyenhuu\.gemini\antigravity\scratch\jarvis-neural-sphere\pending_prompt.json"
+$pendingPromptFile = Join-Path $PSScriptRoot "pending_prompt.json"
 while ($true) {
   if (Test-Path $pendingPromptFile) {
     try {

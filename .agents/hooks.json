@@ -4,7 +4,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\duyet.nguyenhuu\\.gemini\\antigravity\\scratch\\jarvis-neural-sphere\\.agents\\jarvis-hook.ps1\" -Event PreInvocation",
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"./jarvis-hook.ps1\" -Event PreInvocation",
         "timeout": 5
       }
     ],
@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\duyet.nguyenhuu\\.gemini\\antigravity\\scratch\\jarvis-neural-sphere\\.agents\\jarvis-hook.ps1\" -Event PreToolUse",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"./jarvis-hook.ps1\" -Event PreToolUse",
             "timeout": 5
           }
         ]
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\duyet.nguyenhuu\\.gemini\\antigravity\\scratch\\jarvis-neural-sphere\\.agents\\jarvis-hook.ps1\" -Event PostToolUse",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"./jarvis-hook.ps1\" -Event PostToolUse",
             "timeout": 5
           }
         ]

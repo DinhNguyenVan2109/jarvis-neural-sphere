@@ -4,7 +4,8 @@ $inputJson = [Console]::In.ReadToEnd()
 if (-not [string]::IsNullOrWhiteSpace($inputJson)) {
   try {
     $obj = $inputJson | ConvertFrom-Json
-    $stateFile = "C:\Users\duyet.nguyenhuu\.gemini\antigravity\scratch\jarvis-neural-sphere\live_hook_state.json"
+    $repoRoot = Split-Path $PSScriptRoot -Parent
+    $stateFile = Join-Path $repoRoot "live_hook_state.json"
     $out = @{
       event = $Event
       timestamp = (Get-Date).ToString("o")

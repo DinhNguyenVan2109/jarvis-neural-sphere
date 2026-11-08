@@ -1,68 +1,59 @@
-# J.A.R.V.I.S. — 3D Neural Consciousness Interface
-> **Avengers: Age of Ultron Hologram Replica & Interactive Agent Process Visualizer**
+# J.A.R.V.I.S. — 3D Homeostatic Connectome & Live Antigravity Neural Interface
+> **Avengers: Age of Ultron Hologram Replica · Bounded Homeostatic Connectome · Direct Live Bridge to Antigravity**
 
-Hệ thống mô phỏng thực thể ý thức số 3D Hologram **J.A.R.V.I.S.** nguyên bản (thiết kế bởi *Animal Logic* trong *Avengers: Age of Ultron*), được xây dựng hoàn toàn bằng **thuần WebGL 1.0 (Zero Dependencies)** kết hợp công cụ trực quan hóa tiến trình nhận thức của AI Agent theo thời gian thực.
+Hệ thống mô phỏng thực thể ý thức số 3D Hologram **J.A.R.V.I.S.** nguyên bản (thiết kế bởi *Animal Logic* trong *Avengers: Age of Ultron*), được xây dựng bằng **thuần WebGL 1.0 (Zero Dependencies)** và **liên kết trực tiếp theo thời gian thực với chính hệ thống Antigravity** (`transcript.jsonl` + `.agents/hooks.json`).
 
 ![J.A.R.V.I.S. Reference](assets/references/reference_sphere_overview.jpg)
 
 ---
 
-## ✦ Điểm nổi bật & Tính năng kỹ thuật
+## ✦ Điểm nổi bật & Kiến trúc Giải phẫu Thần kinh (Homeostatic Connectome)
 
-### 1. Cấu trúc hình học (Bio-organic Liquid Neural Topology)
-* **Lõi trung tâm (Volumetric Point-Cloud Core):** Vòng sáng rực rỡ (`#FFF0AA` / `#FFBF00`) với tâm đồng tử rỗng tối và vệt lóe sáng chéo ở viền dưới, bao quanh bởi đám mây phân tử siêu nhỏ tự phân rã và tái tụ, lồng trụ vi mạch và các vành khung chữ C 3D.
-* **Mạng lưới liên kết chính (Catmull-Rom Neural Splines):** Các bó sợi trục bất đối xứng tỏa ra từ lõi, kết hợp các nhánh xung điện gai nhọn (`Dendrites/Mycelium`) có độ dày biến thiên và thắt nút tại các `Synaptic Nodes`.
-* **Vỏ cầu vi mạch 3D (Tilted Concentric Truss Shells):** 5 lớp vỏ cầu nghiêng đa trục với hệ thống răng lược (`Comb Teeth`) và đường mạch bậc thang (`Stepped Circuitry`).
-* **Không gian âm (Negative Space):** Bảo tồn ~60% khoảng rỗng tối bên trong khối cầu để tạo chiều sâu lập thể nhìn xuyên thấu (`Translucent Additive Blending`).
+### 1. Bộ não Giới hạn Cân bằng Nội môi (Bounded Connectome — Không bao giờ phình to vô hạn)
+Thay vì cứ mỗi tin nhắn mới lại mọc thêm nhánh vô hạn làm biến dạng khối cầu, bộ não của J.A.R.V.I.S. tuân theo kiến trúc giải phẫu thần kinh thực tế:
+* **Executive Core (`r = 0.08..0.18`):** Trung tâm điều phối nhận thức của mô hình ngôn ngữ (LLM Planner) đang chạy trong Antigravity.
+* **Vòng Hồi hải mã 8 Khe (8-Slot Hippocampus Working Memory Ring, `r = 0.28..0.36`):** Mạch vòng hồi quy gồm 8 khe bộ nhớ làm việc cố định (`HIPPOCAMPUS_SLOTS`). Các lượt hội thoại mới nhất tuần hoàn qua 8 khe này; các lượt cũ hơn được **củng cố (Synaptic Consolidation)** thành trọng số liên kết dài hạn ở vỏ não thay vì đẻ thêm nhánh mới.
+* **7 Thùy Chức năng Vỏ não Cố định (`CORTICAL_REGIONS`):** Đại diện cho 7 hệ thống con thực sự của Antigravity:
+  1. `LANGUAGE & REASONING` — Suy luận chuỗi tư duy (`thinking`) & tổng hợp ngôn ngữ của LLM
+  2. `PERCEPTION & READ` — Đọc file, quan sát hình ảnh & tài nguyên (`read_file`, `view_file`)
+  3. `CODE SYNTHESIS` — Kiến tạo & chỉnh sửa mã nguồn (`write_file`, `edit_file`)
+  4. `MOTOR & SHELL` — Thực thi lệnh hệ thống & quản lý tiến trình (`run_command`, `manage_task`)
+  5. `PROCEDURAL SKILLS` — Các kỹ năng chuyên sâu (`SKILL.md`) đã nạp trong phiên
+  6. `EPISODIC MEMORY` — Trí nhớ sự kiện dài hạn từ nhật ký `transcript.jsonl`
+  7. `SWARM & SEARCH` — Điều phối Subagents & tìm kiếm tri thức (`invoke_subagent`, `search_web`)
+* **Độ dẻo Synap Bão hòa Logarit (Log-Saturated Hebbian Plasticity):** Các bó sợi trục tăng cường độ sáng và mật độ xung theo hàm bão hòa logarit $\min(1.55, 0.35 + c \cdot \log_{10}(1 + N))$ dựa trên tần suất sử dụng thực tế trong phiên.
 
-### 2. Động lực học & Chuyển động (Dynamics & Animation)
-* **Nhịp thở sinh học 4D (Organic Pulsation):** Co bóp nhịp nhàng theo trường sóng 4D Simplex/Perlin tần số thấp với biên độ $\pm 12-15\%$ bán kính.
-* **Xoay đa trục lệch pha (Asynchronous Rotation):** 5 lớp vỏ bọc độc lập xoay chậm theo các trục $(X, Y, Z)$ với tốc độ khác nhau.
-* **Dòng chảy photon tầng (Laminar Data Streams):** 1.350 hạt dữ liệu trượt mượt mà dọc theo các đường cong spline từ tâm ra ngoài và ngược lại.
-* **Tương tác trực tiếp:** Hỗ trợ xoay $360^\circ$ bằng chuột/cảm ứng, lăn chuột để zoom, kích thích tần số nơ-ron khi rê chuột gần tâm.
+### 2. Liên kết Trực tiếp với Antigravity (Live Telemetry & Two-Way Bridge)
+* **Đồng bộ Thời gian thực (`jarvis-antigravity-bridge.ps1`):** Đọc trực tiếp luồng dữ liệu sống từ file `transcript.jsonl` của phiên Antigravity đang mở (và sự kiện từ `.agents/hooks.json`), truyền thẳng số liệu `Total Steps`, `Tool Calls`, `Token Context`, `Thinking Stream`, và `Assistant Response` vào khối cầu 3D mỗi $900\text{ ms}$.
+* **Chế độ Di động Tự động (Portable Home Fallback):** Khi mở trên máy ở nhà chưa có phiên local trùng ID, script tự động nạp bản sao lịch sử đầy đủ tại `conversation_history/transcript_sanitized.jsonl` hoặc tìm phiên Antigravity mới nhất trên máy.
+* **Giao tiếp Hai chiều (`wait-jarvis-prompt.ps1`):** Khi gõ lệnh vào ô dưới đáy giao diện J.A.R.V.I.S., câu lệnh được đẩy qua `/api/prompt` để đánh thức trực tiếp tiến trình Antigravity đang lắng nghe.
 
-### 3. Cỗ máy trực quan hóa tiến trình (7-Stage Live Agent Process)
-Khối cầu phản ứng trực tiếp theo 7 pha nhận thức thực tế của Agent:
-1. **`1. Standby`:** Nhận thức thụ động, thở nhẹ ($42\text{ Hz}$).
-2. **`2. Ingest`:** Sóng hạt đảo chiều đổ dồn từ ngoài vào Lõi, lõi bừng sáng trắng hấp thụ yêu cầu.
-3. **`3. Route`:** Tần số tăng lên $86\text{ Hz}$, các sợi trục phát xung định hướng phân rã bài toán.
-4. **`4. Skill`:** Vành đai vi mạch xoay vào tiêu cự, kích hoạt kỹ năng chuyên sâu (`heat = 1.6`, tốc độ dòng chảy $3.6\text{ c}$).
-5. **`5. Parallel`:** Kích hoạt đồng thời 2 bán cầu đối xứng mô phỏng Subagents song song, trao đổi tín hiệu chéo.
-6. **`6. Verify`:** Sóng hài hòa kiểm định TDD quét qua khối cầu xác nhận không có lỗi ($100\%$ Coherence).
-7. **`7. Synthesis`:** Dòng năng lượng hội tụ về Lõi, phát âm thanh thấu kính và hiển thị báo cáo tổng hợp.
-
-### 4. Hiệu ứng thấu kính & Âm thanh (Optics & Audio)
-* **Multi-Scale Gaussian Bloom:** Ánh sáng phát xạ thể tích (`Volumetric Emission`) với hào quang cam ấm và neon vàng.
-* **Optical Depth-of-Field (DoF Bokeh):** Các sợi và hạt nằm ngoài mặt phẳng lấy nét tự động nhòe thành các đốm bokeh tròn mịn.
-* **Radial Chromatic Aberration:** Tách nhẹ dải màu Đỏ/Lam ở rìa các sợi mỏng.
-* **Procedural Web Audio SFX:** Tổng hợp trực tiếp qua Web Audio API (âm nền $55\text{ Hz}$, tiếng quét thấu kính, hợp âm hoàn tất; có nút Mute/Unmute).
+### 3. Đặc tả Thẩm mỹ & Quang học Điện ảnh (*Avengers: Age of Ultron*)
+* **Giao diện Tối giản Tuyệt đối:** Đã loại bỏ hoàn toàn các bảng chữ rườm rà, thanh trạng thái giả lập và nút bấm thừa. Chỉ giữ lại khối cầu 3D chiếm trọn không gian, 1 dòng chỉ báo kết nối nhỏ góc trên-trái, ô nhập lệnh tối giản dưới đáy và tooltip mảnh khi rê chuột vào từng vùng não.
+* **Volumetric Emission & Multi-Scale Gaussian Bloom:** Tông màu vàng hổ phách (`#FFBF00`), vàng trắng ở tâm (`#FFF0AA`), cam ấm (`#FF7F00`) và cam cháy ở rìa cùng hiệu ứng Depth-of-Field Bokeh và Chromatic Aberration.
 
 ---
 
-## 🚀 Hướng dẫn khởi chạy
+## 🚀 Hướng dẫn khởi chạy (Tại cơ quan hoặc Ở nhà)
 
-Dự án không có bất kỳ thư viện ngoài nào (không cần `npm install` hay build tool):
-* **Cách 1:** Mở trực tiếp file `index.html` bằng bất kỳ trình duyệt hiện đại nào (Chrome, Edge, Firefox, Safari).
-* **Cách 2:** Sử dụng local server nếu muốn (ví dụ: `npx serve .` hoặc VS Code Live Server).
-
----
-
-## 🌐 Hướng dẫn đẩy lên GitHub Repository
-
-Để tiếp tục làm việc trên máy khác hoặc chia sẻ:
-
-```bash
-# 1. Khởi tạo Git repo (nếu chưa có)
-git init
-git add .
-git commit -m "feat: initial commit of J.A.R.V.I.S. 3D Neural Consciousness Interface"
-
-# 2. Tạo một repository mới trên GitHub (ví dụ: jarvis-neural-sphere)
-# 3. Liên kết remote và đẩy code lên:
-git remote add origin https://github.com/<YOUR_USERNAME>/jarvis-neural-sphere.git
-git branch -M main
-git push -u origin main
+### Bước 1: Bật cầu nối thời gian thực với Antigravity
+Mở PowerShell tại thư mục dự án và chạy:
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\jarvis-antigravity-bridge.ps1 -Port 18765
 ```
+*(Script sẽ tự động dò tìm phiên Antigravity đang chạy trên máy của bạn, hoặc dùng `conversation_history/transcript_sanitized.jsonl` nếu chạy độc lập).*
+
+### Bước 2: Mở giao diện 3D J.A.R.V.I.S.
+Mở trực tiếp file `index.html` (hoặc `jarvis-3d-neural-sphere.html`) trên trình duyệt (Chrome / Edge / Firefox). Khối cầu sẽ tự động kết nối tới `http://127.0.0.1:18765/api/brain` và hiển thị trạng thái `LIVE SYNC · SESSION <ID>`.
+
+---
+
+## 💬 Toàn bộ Lịch sử Cuộc trò chuyện (Full Conversation History)
+
+Toàn bộ lịch sử cuộc trò chuyện từ bước đầu tiên đến khi hoàn thiện đã được đóng gói đầy đủ trong thư mục [`conversation_history/`](./conversation_history/):
+1. **[`conversation_history/CONVERSATION_HISTORY.md`](./conversation_history/CONVERSATION_HISTORY.md):** Bản ghi Markdown đầy đủ toàn bộ **22 lượt hội thoại (Turns #1 → #22)** gồm yêu cầu của bạn, quá trình suy luận (`Thinking`), các lệnh công cụ đã chạy và phản hồi chi tiết của Antigravity.
+2. **[`conversation_history/transcript_sanitized.jsonl`](./conversation_history/transcript_sanitized.jsonl):** Bản ghi JSONL nguyên bản toàn bộ hơn 515 bước thực thi của phiên (`892a432f-aae3-45a6-b0ef-94186749a067`), đã tự động ẩn mã token bảo mật, đồng thời đóng vai trò là dữ liệu nạp sẵn cho `jarvis-antigravity-bridge.ps1` khi mở ở nhà.
+3. **[`PROJECT_CONTEXT.md`](./PROJECT_CONTEXT.md):** Tài liệu chuyển giao ngữ cảnh kỹ thuật dành cho Antigravity khi bạn mở dự án ở nhà và muốn tiếp tục phát triển.
 
 ---
 
@@ -70,12 +61,20 @@ git push -u origin main
 
 ```text
 jarvis-neural-sphere/
-├── index.html                 # Ứng dụng WebGL 3D Hologram hoàn chỉnh
-├── README.md                  # Tài liệu hướng dẫn sử dụng & kiến trúc
-├── PROJECT_CONTEXT.md         # Bối cảnh & đặc tả chi tiết để AI tiếp tục cuộc trò chuyện
-├── .gitignore                 # Cấu hình bỏ qua các file tạm
+├── index.html                        # Ứng dụng WebGL 3D Homeostatic Connectome (bản chính)
+├── jarvis-3d-neural-sphere.html      # Bản sao đồng bộ với Artifact của Antigravity
+├── jarvis-antigravity-bridge.ps1     # Daemon HTTP kết nối trực tiếp transcript.jsonl -> WebGL
+├── wait-jarvis-prompt.ps1            # Listener nhận câu lệnh từ UI J.A.R.V.I.S. vào Antigravity
+├── README.md                         # Tài liệu hướng dẫn sử dụng & kiến trúc
+├── PROJECT_CONTEXT.md                # Ngữ cảnh bàn giao chi tiết để tiếp tục ở nhà
+├── .agents/
+│   ├── hooks.json                    # Cấu hình Hook sự kiện của Antigravity
+│   └── jarvis-hook.ps1               # Script bắt sự kiện Hook thời gian thực
+├── conversation_history/
+│   ├── CONVERSATION_HISTORY.md       # Toàn bộ lịch sử cuộc trò chuyện (Markdown đọc trực tiếp)
+│   └── transcript_sanitized.jsonl    # Toàn bộ dữ liệu JSONL nguyên bản của phiên
 └── assets/
-    └── references/            # Ảnh mẫu gốc J.A.R.V.I.S. từ phim
+    └── references/                   # Ảnh mẫu gốc J.A.R.V.I.S. từ phim Age of Ultron
         ├── reference_sphere_overview.jpg
         └── reference_core_detail.jpg
 ```
